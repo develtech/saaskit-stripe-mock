@@ -31,3 +31,7 @@ class SAASKitException(Exception):
 
 class RemoteCustomerNotFound(SAASKitException):
     pass
+
+
+class MultipleCustomersFound(SAASKitException):
+    pass
