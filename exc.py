@@ -61,8 +61,13 @@ class RemoteMultipleCustomersFound(SAASKitException):
     """Exception raised if multiple customers are found for the same email.
     To resolve this, pick the correct customer.
     """
-    pass
+    def __init__(self, *args, **kwargs):
+        self.customers = kwargs.pop('customers')
+        return super(RemoteMultipleCustomersFound, self).__init__(*args, **kwargs)
 
 
 class RemoteCustomerAlreadyExists(SAASKitException):
-    pass
+
+    def __init__(self, *args, **kwargs):
+        self.customers = kwargs.pop('customers')
+        return super(RemoteCustomerAlreadyExists, self).__init__(*args, **kwargs)
