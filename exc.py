@@ -30,12 +30,39 @@ class SAASKitException(Exception):
 
 
 class RemoteCustomerNotFound(SAASKitException):
+    """Customer in local database doesn't exist on payment processor's side.
+
+    Troubleshooting:
+
+    Log into the payment processor and determine if the customer's account
+    is a subscriber.
+
+    - Did prior manual intervention by a colleague leave the local customer ID
+      association out of sync? If so, update it manually.
+
+    - Are the Django configuration settings targetting the correct API
+      environment? If a testing API key is being used in database synchronized
+      for production records, or vice versa, fix the settings.
+
+    - Verify if the wrong environment's could have been sync'd to the database.
+      Did you synchronize production stripe API information on a local server?
+
+      Check to see if the customer is livemode (True for production, False for
+      tests)
+
+      You may want to delete the local copies of API data synchronized from
+      the wrong mode, but if you correctly lookup via livemode, the issue
+      should be fixed.
+    """
     pass
 
 
-class MultipleCustomersFound(SAASKitException):
+class RemoteMultipleCustomersFound(SAASKitException):
+    """Exception raised if multiple customers are found for the same email.
+    To resolve this, pick the correct customer.
+    """
     pass
 
 
-class CustomerAlreadyExists(SAASKitException):
+class RemoteCustomerAlreadyExists(SAASKitException):
     pass
