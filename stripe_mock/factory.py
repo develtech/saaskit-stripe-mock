@@ -51,7 +51,7 @@ DEFAULT_SOURCE_RESPONSE = {
     'address_zip_check': 'pass',
     'brand': 'Visa',
     'country': 'US',
-    'customer': customer_id,
+    # 'customer': customer_id,
     'cvc_check': 'pass',
     'dynamic_last4': None,
     'exp_month': 4,
@@ -84,6 +84,9 @@ class StripeResponses(object):
     - Automatically creates mocks for empty stripe resources (instead of
       raising ConnectionError).
 
+    Without this factory object, tests need to repeat this every process every
+    single time.
+
     Usage:
         s = StripeResponses()
 
@@ -100,13 +103,31 @@ class StripeResponses(object):
 
     def add_source(self, customer_id, **kwargs):
         """
+        :param customer_id: customer id to add source for
+        :type customer_id: string
 
         Note: In stripe, sources are always binded to customers.
+
+        If source id already exists, overwrite properties.
         """
+
         if customer_id not in self.customer_sources:
             self.customer_sources[customer_id] = []
 
-        hi = DEFAULT_STRIPE_RESPONSES
+        for idx, source in enumerate(self.customer_sources[customer_id]):
+            # existing source?
+            if kwargs['id'] == source['id']:  # update and return void
+                self.customer_sources[customer_id][idx].update(source)
+                return
+
+        # new source, append
+        self.customer_sources[customer_id].append({
+            **DEFAULT_SOURCE_RESPONSE,
+            **{
+                'customer_id': customer_id,
+            },
+            **kwargs,
+        })
 
     def add_plan(self, **kwargs):
         pass
