@@ -2,6 +2,7 @@
 import json
 
 import responses
+from faker import Faker
 
 
 def add_response(method, url, body, status):
@@ -28,3 +29,95 @@ def add_response(method, url, body, status):
         status=status,
         content_type='application/json',
     )
+
+
+def add_customer_response(
+    sources=[],
+):
+    """
+
+    """
+    pass
+
+
+DEFAULT_SOURCE_RESPONSE = {
+    'address_city': 'new york',
+    'address_country': 'usa',
+    'address_line1': 'McAllister St',
+    'address_line1_check': 'pass',
+    'address_line2': None,
+    'address_state': 'ny',
+    'address_zip': '10013',
+    'address_zip_check': 'pass',
+    'brand': 'Visa',
+    'country': 'US',
+    'customer': customer_id,
+    'cvc_check': 'pass',
+    'dynamic_last4': None,
+    'exp_month': 4,
+    'exp_year': 2032,
+    'fingerprint': 'ZX4L088dUFClwtPD',
+    'funding': 'credit',
+    'id': 'card_1BYxtEEzushJqDoiJUQkSyER',
+    'last4': '4242',
+    'metadata': {},
+    'name': 'John Doe',
+    'object': 'card',
+    'tokenization_method': None,
+}
+
+
+class StripeResponses(object):
+    """Sets responses against the stripe API with dummy data.
+
+    Mocks by setting/deleting the responses singleton object.
+
+    - Adding objects also not only updates GET id-lookups, but also listing
+      objects.
+    - When adding stripe responses, other information will be filled in by
+      default data.
+
+    Other benefits:
+
+    - No needs to worry about URL's
+    - No need to worry about encoding
+    - Automatically creates mocks for empty stripe resources (instead of
+      raising ConnectionError).
+
+    Usage:
+        s = StripeResponses()
+
+    """
+    customers = []
+    customer_sources = {}
+    plan = []
+
+    def add_customer(self, **kwargs):
+        """
+        If sources exist in kwargs, add_source will be triggered automatically.
+        """
+        pass
+
+    def add_source(self, customer_id, **kwargs):
+        """
+
+        Note: In stripe, sources are always binded to customers.
+        """
+        if customer_id not in self.customer_sources:
+            self.customer_sources[customer_id] = []
+
+        hi = DEFAULT_STRIPE_RESPONSES
+
+    def add_plan(self, **kwargs):
+        pass
+
+    def sync(self):
+        """Clear and recreate all responses based on stripe objects."""
+
+        if not self.customers:
+            # add 404's
+            pass
+
+        if not self.plans:
+            # add 404's
+            pass
