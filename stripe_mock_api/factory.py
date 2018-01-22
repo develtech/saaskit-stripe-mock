@@ -67,7 +67,7 @@ DEFAULT_SOURCE_RESPONSE = {
 }
 
 
-class StripeResponses(object):
+class StripeMockAPI(object):
     """Sets responses against the stripe API with dummy data.
 
     Mocks by setting/deleting the responses singleton object.
