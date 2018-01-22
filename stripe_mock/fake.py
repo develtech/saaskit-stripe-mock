@@ -10,7 +10,7 @@ def fake_empty_sources(customer_id):
         'object': 'list',
         'total_count': 0,
         'url': '/v1/customers/{}/sources'.format(customer_id),
-    },
+    }
 
 
 def fake_customer(customer_id, **kwargs):
