@@ -3,7 +3,8 @@
 import responses
 import stripe
 
-from ..factory import StripeMockAPI, add_response, fake_customer
+from ..factory import StripeMockAPI, add_response
+from ..fake import fake_customer
 
 
 @responses.activate
