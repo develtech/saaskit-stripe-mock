@@ -138,10 +138,9 @@ class StripeMockAPI(object):
         """
         If sources exist in kwargs, add_source will be triggered automatically.
         """
-        customer = None
         for idx, c in enumerate(self.customers):
             # customer already exists, overwrite properties
-            if customer_id == customer.id:
+            if customer_id == c.id:
                 self.customers[idx].update(kwargs)
                 return
 
@@ -181,10 +180,9 @@ class StripeMockAPI(object):
         """
         If sources exist in kwargs, add_source will be triggered automatically.
         """
-        plan = None
         for idx, c in enumerate(self.plans):
             # plan already exists, overwrite properties
-            if plan_id == plan.id:
+            if plan_id == c.id:
                 self.plans[idx].update(kwargs)
                 return
 
@@ -196,11 +194,13 @@ class StripeMockAPI(object):
     def sync(self):
         """Clear and recreate all responses based on stripe objects."""
 
+        responses.reset()
+
         if self.customers:
             for c in self.customers:
                 add_response(
                     'GET',
-                    '{}/v1/customers/{}'.format(stripe.api_base, c['id']),
+                    '{}{}'.format(CUSTOMER_URL_BASE, c['id']),
                     c,
                     200,
                 )
@@ -213,10 +213,13 @@ class StripeMockAPI(object):
         )
 
         if self.plans:
-            pass
-        else:
-            # add 404's for plans
-            pass
+            for p in self.plans:
+                add_response(
+                    'GET',
+                    '{}{}'.format(PLAN_URL_BASE, p['id']),
+                    p,
+                    200,
+                )
 
         add_callback(
             'GET',
