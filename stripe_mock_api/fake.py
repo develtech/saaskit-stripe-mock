@@ -33,7 +33,6 @@ def fake_customer(customer_id, **kwargs):
 
 
 def fake_source(customer_id, **kwargs):
-
     return {**{
         'address_city': 'new york',
         'address_country': 'usa',
@@ -58,4 +57,21 @@ def fake_source(customer_id, **kwargs):
         'name': 'John Doe',
         'object': 'card',
         'tokenization_method': None,
+    }, **kwargs}
+
+
+def fake_plan(plan_id, **kwargs):
+    return {**{
+        'amount': 999,
+        'created': 1513273051,
+        'currency': 'usd',
+        'id': plan_id,
+        'interval': 'month',
+        'interval_count': 1,
+        'livemode': False,
+        'metadata': {},
+        'name': 'Devel.tech 9.99',
+        'object': 'plan',
+        'statement_descriptor': None,
+        'trial_period_days': None
     }, **kwargs}

@@ -5,7 +5,7 @@ import re
 import responses
 import stripe
 
-from .fake import fake_customer, fake_source
+from .fake import fake_customer, fake_source, fake_plan
 
 CUSTOMER_URL_BASE = '{}/v1/customers/'.format(stripe.api_base)
 CUSTOMER_URL_RE = re.compile(r'{}(\w+)'.format(CUSTOMER_URL_BASE))
@@ -177,8 +177,21 @@ class StripeMockAPI(object):
             fake_source(customer_id, **kwargs)
         )
 
-    def add_plan(self, **kwargs):
-        pass
+    def add_plan(self, plan_id, **kwargs):
+        """
+        If sources exist in kwargs, add_source will be triggered automatically.
+        """
+        plan = None
+        for idx, c in enumerate(self.plans):
+            # plan already exists, overwrite properties
+            if plan_id == plan.id:
+                self.plans[idx].update(kwargs)
+                return
+
+        # add plan
+        self.plans.append(
+            fake_plan(plan_id, **kwargs)
+        )
 
     def sync(self):
         """Clear and recreate all responses based on stripe objects."""
