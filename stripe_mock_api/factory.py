@@ -153,11 +153,10 @@ class StripeMockAPI(object):
 
         # fill in 404's for customers
         base_url = '{}/v1/customers/'.format(stripe.api_base)
-        url_pattern = re.compile(r'{}.*'.format(base_url))
+        url_pattern = re.compile(r'{}(\w+)'.format(base_url))
 
         def customer_not_found(request):
-            customer_re = re.compile(r'{}(\w+)'.format(base_url))
-            customer_id = customer_re.match(request.url).group(1)
+            customer_id = url_pattern.match(request.url).group(1)
             return (404, {}, {
                 'error': {
                     'type': 'invalid_request_error',
