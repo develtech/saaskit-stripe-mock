@@ -2,6 +2,7 @@
 import json
 
 import responses
+import stripe
 
 from .fake import fake_customer, fake_source
 
@@ -63,7 +64,7 @@ class StripeMockAPI(object):
     """
     customers = []
     customer_sources = {}
-    plan = []
+    plans = []
 
     def add_customer(self, customer_id, **kwargs):
         """
@@ -77,18 +78,21 @@ class StripeMockAPI(object):
                 return
 
         # add customer
-        self.customer.append(
+        self.customers.append(
             fake_customer(customer_id, **kwargs)
         )
 
     def add_source(self, customer_id, **kwargs):
-        """
+        """Add a source for a customer ID.
+
         :param customer_id: customer id to add source for
         :type customer_id: string
 
-        Note: In stripe, sources are always binded to customers.
+        Reminder: Stripe sources are always attached customers.
 
-        If source id already exists, overwrite properties.
+        Behavioral notes:
+
+        If source ID already exists, overwrite properties.
         """
 
         if customer_id not in self.customer_sources:
@@ -112,7 +116,13 @@ class StripeMockAPI(object):
         """Clear and recreate all responses based on stripe objects."""
 
         if self.customers:
-            pass
+            for c in self.customers:
+                add_response(
+                    'GET',
+                    '{}/v1/customers/{}'.format(stripe.api_base, c['id']),
+                    c,
+                    200,
+                )
         else:
             # add 404's for custoemrs
             pass
