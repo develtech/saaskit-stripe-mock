@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import re
 
 import responses
 import stripe
@@ -28,6 +29,34 @@ def add_response(method, url, body, status):
         getattr(responses, method),
         url,
         body=json_body,
+        status=status,
+        content_type='application/json',
+    )
+
+
+def add_callback(method, url, cb, status):
+    """Utility function to register a responses mock.
+
+    - handles setting content_type as json
+    - dumps data (dict) to a json-encoded string literal
+
+    :param method: GET, POST, UPDATE, etc.
+    :type method: string
+    :param url: url
+    :type url: string
+    :param cb: data will be dumped into json string automatically
+    :type cb: callable
+    :param status: http status to return
+    :type status: int
+    :rtype: void (nothing)
+    """
+    def json_cb(request):
+        return json.dumps(cb(request))
+
+    responses.add(
+        getattr(responses, method),
+        url,
+        callback=cb,
         status=status,
         content_type='application/json',
     )
@@ -124,8 +153,24 @@ class StripeMockAPI(object):
                     200,
                 )
         else:
-            # add 404's for custoemrs
-            pass
+            base_url = '{}/v1/customers/{}'.format(stripe.api_base)
+            url_pattern = re.compile(base_url + r'.*')
+
+            def customer_not_found(request):
+                customer_id = re.match(re.compile(base_url + r'(?.*)'))[0]
+                return {
+                    'error': {
+                        'type': 'invalid_request_error',
+                        'message': 'No such customer: {}'.format(customer_id),
+                        'param': 'id'
+                    }
+                }
+            add_callback(
+                'GET',
+                url_pattern,
+                customer_not_found,
+                404,
+            )
 
         if self.plans:
             pass
