@@ -132,6 +132,7 @@ class StripeMockAPI(object):
     """
     customers = []
     customer_sources = {}
+    customer_subscriptions = {}
     plans = []
 
     def add_customer(self, customer_id, **kwargs):
