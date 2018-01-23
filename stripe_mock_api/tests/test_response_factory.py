@@ -37,4 +37,9 @@ def test_stripe_mock_api():
     customer_404_id = 'cus_that_doesnt_exist'
     message = 'No such customer: {}'.format(customer_404_id)
     with pytest.raises(stripe.error.InvalidRequestError, message=message):
-        customer = stripe.Customer.retrieve(customer_404_id)
+        stripe.Customer.retrieve(customer_404_id)
+
+    plan_404_id = 'plan_that_doesnt_exist'
+    message = 'No such plan: {}'.format(plan_404_id)
+    with pytest.raises(stripe.error.InvalidRequestError, message=message):
+        stripe.Plan.retrieve(plan_404_id)
