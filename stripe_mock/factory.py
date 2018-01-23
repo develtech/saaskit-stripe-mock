@@ -7,6 +7,20 @@ import stripe
 
 from .fake import fake_customer, fake_source
 
+CUSTOMER_URL_BASE = '{}/v1/customers/'.format(stripe.api_base)
+CUSTOMER_URL_RE = re.compile(r'{}(\w+)'.format(CUSTOMER_URL_BASE))
+
+
+def customer_not_found(request):
+    customer_id = CUSTOMER_URL_RE.match(request.url).group(1)
+    return (404, {}, {
+        'error': {
+            'type': 'invalid_request_error',
+            'message': 'No such customer: {}'.format(customer_id),
+            'param': 'id'
+        }
+    })
+
 
 def add_response(method, url, body, status):
     """Utility function to register a responses mock.
@@ -152,21 +166,9 @@ class StripeMockAPI(object):
                 )
 
         # fill in 404's for customers
-        base_url = '{}/v1/customers/'.format(stripe.api_base)
-        url_pattern = re.compile(r'{}(\w+)'.format(base_url))
-
-        def customer_not_found(request):
-            customer_id = url_pattern.match(request.url).group(1)
-            return (404, {}, {
-                'error': {
-                    'type': 'invalid_request_error',
-                    'message': 'No such customer: {}'.format(customer_id),
-                    'param': 'id'
-                }
-            })
         add_callback(
             'GET',
-            url_pattern,
+            CUSTOMER_URL_RE,
             customer_not_found,
         )
 
