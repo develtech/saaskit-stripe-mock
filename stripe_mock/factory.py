@@ -2,7 +2,8 @@
 import json
 
 import responses
-from .fake import fake_source
+
+from .fake import fake_customer, fake_source
 
 
 def add_response(method, url, body, status):
@@ -64,11 +65,21 @@ class StripeMockAPI(object):
     customer_sources = {}
     plan = []
 
-    def add_customer(self, **kwargs):
+    def add_customer(self, customer_id, **kwargs):
         """
         If sources exist in kwargs, add_source will be triggered automatically.
         """
-        pass
+        customer = None
+        for idx, c in enumerate(self.customers):
+            # customer already exists, overwrite properties
+            if customer_id == customer.id:
+                self.customers[idx].update(kwargs)
+                return
+
+        # add customer
+        self.customer.append(
+            fake_customer(customer_id, **kwargs)
+        )
 
     def add_source(self, customer_id, **kwargs):
         """
@@ -86,7 +97,7 @@ class StripeMockAPI(object):
         for idx, source in enumerate(self.customer_sources[customer_id]):
             # existing source?
             if kwargs['id'] == source['id']:  # update and return void
-                self.customer_sources[customer_id][idx].update(source)
+                self.customer_sources[customer_id][idx].update(kwargs)
                 return
 
         # new source, append
