@@ -34,7 +34,7 @@ def fake_customer(customer_id, **kwargs):
 
 def fake_source(customer_id, **kwargs):
 
-    return {
+    return {**{
         'address_city': 'new york',
         'address_country': 'usa',
         'address_line1': 'McAllister St',
@@ -58,4 +58,4 @@ def fake_source(customer_id, **kwargs):
         'name': 'John Doe',
         'object': 'card',
         'tokenization_method': None,
-    }
+    }, **kwargs}
