@@ -19,3 +19,16 @@ def test_add_response():
 
     customer = stripe.Customer.retrieve(customer_id)
     assert customer.id == customer_id
+
+
+@responses.activate
+def test_stripe_mock_api():
+    customer_id = 'cus_hihi'
+
+    s = StripeMockAPI()
+
+    s.add_customer(customer_id)
+    s.sync()
+
+    customer = stripe.Customer.retrieve(customer_id)
+    assert customer.id == customer_id
