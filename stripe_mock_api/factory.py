@@ -48,6 +48,11 @@ class StripeMockAPI(object):
     - Automatically creates mocks for empty stripe resources (instead of
       raising ConnectionError).
 
+      - TODO: Including pattern matchings
+        https://github.com/getsentry/responses/pull/25
+
+        for instances where a GET id for a customer/plan doesn't exist
+
     Without this factory object, tests need to repeat this every process every
     single time.
 
@@ -95,10 +100,14 @@ class StripeMockAPI(object):
     def sync(self):
         """Clear and recreate all responses based on stripe objects."""
 
-        if not self.customers:
-            # add 404's
+        if self.customers:
+            pass
+        else:
+            # add 404's for custoemrs
             pass
 
-        if not self.plans:
-            # add 404's
+        if self.plans:
+            pass
+        else:
+            # add 404's for plans
             pass
