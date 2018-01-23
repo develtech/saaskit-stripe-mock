@@ -34,7 +34,7 @@ def add_response(method, url, body, status):
     )
 
 
-def add_callback(method, url, cb, status):
+def add_callback(method, url, cb):
     """Utility function to register a responses mock.
 
     - handles setting content_type as json
@@ -46,18 +46,16 @@ def add_callback(method, url, cb, status):
     :type url: string
     :param cb: data will be dumped into json string automatically
     :type cb: callable
-    :param status: http status to return
-    :type status: int
     :rtype: void (nothing)
     """
     def json_cb(request):
-        return json.dumps(cb(request))
+        status, headers, body = cb(request)
+        return (status, headers, json.dumps(body))
 
-    responses.add(
+    responses.add_callback(
         getattr(responses, method),
         url,
-        callback=cb,
-        status=status,
+        callback=json_cb,
         content_type='application/json',
     )
 
@@ -152,25 +150,26 @@ class StripeMockAPI(object):
                     c,
                     200,
                 )
-        else:
-            base_url = '{}/v1/customers/{}'.format(stripe.api_base)
-            url_pattern = re.compile(base_url + r'.*')
 
-            def customer_not_found(request):
-                customer_id = re.match(re.compile(base_url + r'(?.*)'))[0]
-                return {
-                    'error': {
-                        'type': 'invalid_request_error',
-                        'message': 'No such customer: {}'.format(customer_id),
-                        'param': 'id'
-                    }
+        # fill in 404's for customers
+        base_url = '{}/v1/customers/'.format(stripe.api_base)
+        url_pattern = re.compile(r'{}.*'.format(base_url))
+
+        def customer_not_found(request):
+            customer_re = re.compile(r'{}(\w+)'.format(base_url))
+            customer_id = customer_re.match(request.url).group(1)
+            return (404, {}, {
+                'error': {
+                    'type': 'invalid_request_error',
+                    'message': 'No such customer: {}'.format(customer_id),
+                    'param': 'id'
                 }
-            add_callback(
-                'GET',
-                url_pattern,
-                customer_not_found,
-                404,
-            )
+            })
+        add_callback(
+            'GET',
+            url_pattern,
+            customer_not_found,
+        )
 
         if self.plans:
             pass

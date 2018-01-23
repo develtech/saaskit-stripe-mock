@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pytest
 
 import responses
 import stripe
@@ -32,3 +33,8 @@ def test_stripe_mock_api():
 
     customer = stripe.Customer.retrieve(customer_id)
     assert customer.id == customer_id
+
+    customer_404_id = 'cus_that_doesnt_exist'
+    message = 'No such customer: {}'.format(customer_404_id)
+    with pytest.raises(stripe.error.InvalidRequestError, message=message):
+        customer = stripe.Customer.retrieve(customer_404_id)
