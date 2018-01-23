@@ -31,15 +31,6 @@ def add_response(method, url, body, status):
     )
 
 
-def add_customer_response(
-    sources=[],
-):
-    """
-
-    """
-    pass
-
-
 class StripeMockAPI(object):
     """Sets responses against the stripe API with dummy data.
 
@@ -97,13 +88,6 @@ class StripeMockAPI(object):
         self.customer_sources[customer_id].append(
             fake_source(customer_id, **kwargs)
         )
-        # self.customer_sources[customer_id].append({
-        #     **DEFAULT_SOURCE_RESPONSE,
-        #     **{
-        #         'customer_id': customer_id,
-        #     },
-        #     **kwargs,
-        # })
 
     def add_plan(self, **kwargs):
         pass
