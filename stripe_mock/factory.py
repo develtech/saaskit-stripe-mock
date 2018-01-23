@@ -9,6 +9,8 @@ from .fake import fake_customer, fake_source
 
 CUSTOMER_URL_BASE = '{}/v1/customers/'.format(stripe.api_base)
 CUSTOMER_URL_RE = re.compile(r'{}(\w+)'.format(CUSTOMER_URL_BASE))
+PLAN_URL_BASE = '{}/v1/plans/'.format(stripe.api_base)
+PLAN_URL_RE = re.compile(r'{}(\w+)'.format(PLAN_URL_BASE))
 
 
 def customer_not_found(request):
@@ -24,6 +26,24 @@ def customer_not_found(request):
         'error': {
             'type': 'invalid_request_error',
             'message': 'No such customer: {}'.format(customer_id),
+            'param': 'id'
+        }
+    })
+
+
+def plan_not_found(request):
+    """Callback for plan not being found, for responses.
+
+    :param request: request object from responses
+    :type request: :class:`requests.Request`
+    :returns: signature required by :meth:`responses.add_callback`
+    :rtype: (int, dict, dict) (status, headers, body)
+    """
+    plan_id = PLAN_URL_RE.match(request.url).group(1)
+    return (404, {}, {
+        'error': {
+            'type': 'invalid_request_error',
+            'message': 'No such plan: {}'.format(plan_id),
             'param': 'id'
         }
     })
@@ -184,3 +204,9 @@ class StripeMockAPI(object):
         else:
             # add 404's for plans
             pass
+
+        add_callback(
+            'GET',
+            PLAN_URL_RE,
+            plan_not_found,
+        )
