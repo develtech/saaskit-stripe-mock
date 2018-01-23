@@ -12,6 +12,13 @@ CUSTOMER_URL_RE = re.compile(r'{}(\w+)'.format(CUSTOMER_URL_BASE))
 
 
 def customer_not_found(request):
+    """Callback for customer not being found, for responses.
+
+    :param request: request object from responses
+    :type request: :class:`requests.Request`
+    :returns: signature required by :meth:`responses.add_callback`
+    :rtype: (int, dict, dict) (status, headers, body)
+    """
     customer_id = CUSTOMER_URL_RE.match(request.url).group(1)
     return (404, {}, {
         'error': {
