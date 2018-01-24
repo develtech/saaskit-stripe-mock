@@ -235,22 +235,6 @@ class StripeMockAPI(object):
 
         responses.reset()
 
-        if self.customers:
-            for c in self.customers:
-                add_response(
-                    'GET',
-                    '{}{}'.format(CUSTOMER_URL_BASE, c['id']),
-                    c,
-                    200,
-                )
-
-        # fill in 404's for customers
-        add_callback(
-            'GET',
-            CUSTOMER_URL_RE,
-            customer_not_found,
-        )
-
         if self.plans:
             for p in self.plans:
                 add_response(
@@ -280,4 +264,20 @@ class StripeMockAPI(object):
             'GET',
             SUBSCRIPTION_URL_RE,
             subscription_not_found,
+        )
+
+        if self.customers:
+            for c in self.customers:
+                add_response(
+                    'GET',
+                    '{}{}'.format(CUSTOMER_URL_BASE, c['id']),
+                    c,
+                    200,
+                )
+
+        # fill in 404's for customers
+        add_callback(
+            'GET',
+            CUSTOMER_URL_RE,
+            customer_not_found,
         )
