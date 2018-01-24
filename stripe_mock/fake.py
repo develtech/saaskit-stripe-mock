@@ -30,16 +30,6 @@ def fake_subscriptions(subscription_list):
     }
 
 
-def fake_empty_subscriptions(customer_id):
-    return {
-        'data': [],
-        'has_more': False,
-        'object': 'list',
-        'total_count': 0,
-        'url': '/v1/customers/{}/subscriptions'.format(customer_id),
-    }
-
-
 def fake_customer_subscriptions(customer_id, subscription_list):
     """Fake the subscription listings for a customer.
 
