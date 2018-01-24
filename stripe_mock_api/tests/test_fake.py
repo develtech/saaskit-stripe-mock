@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ..fake import fake_customer, fake_empty_sources, fake_source, fake_plan
+from ..fake import fake_customer, fake_empty_sources, fake_plan, fake_source
 
 
 def test_fake_customer():

@@ -2,7 +2,7 @@
 import responses
 import stripe
 
-from ..factory import add_response, add_callback
+from ..factory import add_callback, add_response
 from ..fake import fake_customer
 
 

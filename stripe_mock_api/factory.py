@@ -5,7 +5,7 @@ import re
 import responses
 import stripe
 
-from .fake import fake_customer, fake_source, fake_plan
+from .fake import fake_customer, fake_plan, fake_source
 
 CUSTOMER_URL_BASE = '{}/v1/customers/'.format(stripe.api_base)
 CUSTOMER_URL_RE = re.compile(r'{}(\w+)'.format(CUSTOMER_URL_BASE))
@@ -22,13 +22,14 @@ def customer_not_found(request):
     :rtype: (int, dict, dict) (status, headers, body)
     """
     customer_id = CUSTOMER_URL_RE.match(request.url).group(1)
-    return (404, {}, {
-        'error': {
-            'type': 'invalid_request_error',
-            'message': 'No such customer: {}'.format(customer_id),
-            'param': 'id'
-        }
-    })
+    return (
+        404, {}, {
+            'error': {
+                'type': 'invalid_request_error',
+                'message': 'No such customer: {}'.format(customer_id),
+                'param': 'id'
+            }
+        })
 
 
 def plan_not_found(request):
@@ -40,13 +41,14 @@ def plan_not_found(request):
     :rtype: (int, dict, dict) (status, headers, body)
     """
     plan_id = PLAN_URL_RE.match(request.url).group(1)
-    return (404, {}, {
-        'error': {
-            'type': 'invalid_request_error',
-            'message': 'No such plan: {}'.format(plan_id),
-            'param': 'id'
-        }
-    })
+    return (
+        404, {}, {
+            'error': {
+                'type': 'invalid_request_error',
+                'message': 'No such plan: {}'.format(plan_id),
+                'param': 'id'
+            }
+        })
 
 
 def add_response(method, url, body, status):
@@ -89,6 +91,7 @@ def add_callback(method, url, cb):
     :type cb: callable
     :rtype: void (nothing)
     """
+
     def json_cb(request):
         status, headers, body = cb(request)
         return (status, headers, json.dumps(body))
@@ -102,6 +105,7 @@ def add_callback(method, url, cb):
 
 
 class StripeMockAPI(object):
+
     """Sets responses against the stripe API with dummy data.
 
     Mocks by setting/deleting the responses singleton object.
@@ -146,9 +150,7 @@ class StripeMockAPI(object):
                 return
 
         # add customer
-        self.customers.append(
-            fake_customer(customer_id, **kwargs)
-        )
+        self.customers.append(fake_customer(customer_id, **kwargs))
 
     def add_source(self, customer_id, **kwargs):
         """Add a source for a customer ID.
@@ -174,8 +176,7 @@ class StripeMockAPI(object):
 
         # new source, append
         self.customer_sources[customer_id].append(
-            fake_source(customer_id, **kwargs)
-        )
+            fake_source(customer_id, **kwargs))
 
     def add_plan(self, plan_id, **kwargs):
         """
@@ -188,9 +189,7 @@ class StripeMockAPI(object):
                 return
 
         # add plan
-        self.plans.append(
-            fake_plan(plan_id, **kwargs)
-        )
+        self.plans.append(fake_plan(plan_id, **kwargs))
 
     def sync(self):
         """Clear and recreate all responses based on stripe objects."""
