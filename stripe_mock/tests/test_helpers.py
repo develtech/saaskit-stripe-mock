@@ -2,8 +2,8 @@
 import responses
 import stripe
 
-from ..factory import add_callback, add_response
 from ..fake import fake_customer
+from ..helpers import add_callback, add_response
 
 
 @responses.activate
