@@ -96,7 +96,7 @@ class StripeMockAPI(object):
         """
         for idx, c in enumerate(self.customers):
             # customer already exists, overwrite properties
-            if customer_id == c.id:
+            if customer_id == c['id']:
                 self.customers[idx].update(kwargs)
                 return
 
@@ -276,7 +276,16 @@ class StripeMockAPI(object):
                 add_response(
                     'GET',
                     '{}/{}'.format(CUSTOMER_URL_BASE, c['id']),
-                    c,
+                    {**c, **{
+                        'subscriptions': fake_customer_subscriptions(
+                            c['id'],
+                            self.customer_subscriptions.get(c['id'], []),
+                        ),
+                        'sources': fake_customer_sources(
+                            c['id'],
+                            self.customer_sources.get(c['id'], []),
+                        ),
+                    }},
                     200,
                 )
             add_response(
