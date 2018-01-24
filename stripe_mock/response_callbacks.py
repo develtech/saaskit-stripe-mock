@@ -2,6 +2,7 @@
 """Functions to generate stripe responses. For use w/ responses.add_callback()
 """
 from .patterns import (
+    COUPON_URL_RE,
     CUSTOMER_URL_RE,
     PLAN_URL_RE,
     SOURCE_URL_RE,
@@ -75,3 +76,15 @@ def source_not_found(request):
     """
     source_id = SOURCE_URL_RE.match(request.url).group(2)
     return stripe_object_not_found('source', source_id)
+
+
+def coupon_not_found(request):
+    """Callback for coupon not being found, for responses.
+
+    :param request: request object from responses
+    :type request: :class:`requests.Request`
+    :returns: signature required by :meth:`responses.add_callback`
+    :rtype: (int, dict, dict) (status, headers, body)
+    """
+    coupon_id = COUPON_URL_RE.match(request.url).group(1)
+    return stripe_object_not_found('coupon', coupon_id)
