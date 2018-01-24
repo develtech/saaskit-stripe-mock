@@ -7,10 +7,10 @@ import stripe
 
 from .fake import (
     fake_customer,
+    fake_customer_source,
     fake_customer_sources,
     fake_customer_subscriptions,
     fake_plan,
-    fake_source,
     fake_subscription,
     fake_subscriptions,
 )
@@ -230,7 +230,7 @@ class StripeMockAPI(object):
 
         # new source, append
         self.customer_sources[customer_id].append(
-            fake_source(customer_id, **kwargs))
+            fake_customer_source(customer_id, **kwargs))
 
     def add_plan(self, plan_id, **kwargs):
         """
