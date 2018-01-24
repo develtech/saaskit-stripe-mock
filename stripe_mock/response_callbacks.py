@@ -12,6 +12,10 @@ from .patterns import (
 def stripe_object_not_found(object_name, object_id):
     """Return responses callback templated for mimicking response from stripe.
 
+    :param object_name: name of stripe object, e.g. 'card', 'customer'
+    :type object_name: string
+    :param object_id: id of stripe object, e.g. 'cus_Bwrbeyo88aaUYP'
+    :type object_id: string
     :returns: signature required by :meth:`responses.add_callback`
     :rtype: (int, dict, dict) (status, headers, body)
     """
