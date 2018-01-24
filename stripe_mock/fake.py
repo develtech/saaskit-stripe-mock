@@ -37,6 +37,40 @@ def fake_coupons(coupon_list):
     }
 
 
+def fake_customers(customer_list):
+    """Fake the customer listings (globally).
+
+    :param customer_list: list of customer data
+    :type customer_list: list[dict]
+    :returns: response of data immitating stripe's listing
+    :rtype: dict
+    """
+    return {
+        'data': customer_list,
+        'has_more': False,
+        'object': 'list',
+        'total_count': len(customer_list),
+        'url': '/v1/customers',
+    }
+
+
+def fake_plans(plan_list):
+    """Fake the plan listings (globally).
+
+    :param plan_list: list of plan data
+    :type plan_list: list[dict]
+    :returns: response of data immitating stripe's listing
+    :rtype: dict
+    """
+    return {
+        'data': plan_list,
+        'has_more': False,
+        'object': 'list',
+        'total_count': len(plan_list),
+        'url': '/v1/plans',
+    }
+
+
 def fake_customer_subscriptions(customer_id, subscription_list):
     """Fake the subscription listings for a customer.
 

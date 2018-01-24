@@ -19,6 +19,8 @@ def test_customers():
     customer = stripe.Customer.retrieve(customer_id)
     assert customer.id == customer_id
 
+    assert len(stripe.Customer.list()) == 1
+
     customer_404_id = 'cus_that_doesnt_exist'
     message = 'No such customer: {}'.format(customer_404_id)
     with pytest.raises(stripe.error.InvalidRequestError, message=message):
@@ -34,6 +36,8 @@ def test_plans():
 
     plan = stripe.Plan.retrieve(plan_id)
     assert plan.id == plan_id
+
+    assert len(stripe.Plan.list()) == 1
 
     plan_404_id = 'plan_that_doesnt_exist'
     message = 'No such plan: {}'.format(plan_404_id)

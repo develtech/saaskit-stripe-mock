@@ -5,10 +5,12 @@ from .fake import (
     fake_coupon,
     fake_coupons,
     fake_customer,
+    fake_customers,
     fake_customer_source,
     fake_customer_sources,
     fake_customer_subscriptions,
     fake_plan,
+    fake_plans,
     fake_subscription,
     fake_subscriptions,
 )
@@ -184,6 +186,12 @@ class StripeMockAPI(object):
                     p,
                     200,
                 )
+            add_response(
+                'GET',
+                PLAN_URL_BASE,
+                fake_plans(self.plans),
+                200,
+            )
 
         add_callback(
             'GET',
@@ -271,6 +279,12 @@ class StripeMockAPI(object):
                     c,
                     200,
                 )
+            add_response(
+                'GET',
+                CUSTOMER_URL_BASE,
+                fake_customers(self.customers),
+                200,
+            )
 
         # fill in 404's for customers
         add_callback(
