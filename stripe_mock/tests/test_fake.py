@@ -2,10 +2,10 @@
 
 from ..fake import (
     fake_customer,
+    fake_customer_source,
     fake_customer_sources,
     fake_customer_subscriptions,
     fake_plan,
-    fake_source,
     fake_subscription,
 )
 
@@ -18,7 +18,7 @@ def test_fake_customer():
 
 def test_fake_source():
     customer_id = 'cus_ok'
-    source = fake_source(customer_id)
+    source = fake_customer_source(customer_id)
     assert source['customer'] == customer_id
 
 

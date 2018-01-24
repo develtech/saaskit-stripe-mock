@@ -77,7 +77,7 @@ def fake_customer(customer_id, **kwargs):
     }, **kwargs}
 
 
-def fake_source(customer_id, **kwargs):
+def fake_customer_source(customer_id, **kwargs):
     return {**{
         'address_city': 'new york',
         'address_country': 'usa',
