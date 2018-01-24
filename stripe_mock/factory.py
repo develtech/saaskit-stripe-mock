@@ -12,16 +12,17 @@ from .fake import (
     fake_plan,
     fake_source,
     fake_subscription,
+    fake_subscriptions,
 )
 
-CUSTOMER_URL_BASE = '{}/v1/customers/'.format(stripe.api_base)
-CUSTOMER_URL_RE = re.compile(r'{}(\w+)'.format(CUSTOMER_URL_BASE))
+CUSTOMER_URL_BASE = '{}/v1/customers'.format(stripe.api_base)
+CUSTOMER_URL_RE = re.compile(r'{}/(\w+)'.format(CUSTOMER_URL_BASE))
 SOURCE_URL_BASE = '{}/sources/'.format(CUSTOMER_URL_BASE)
 SOURCE_URL_RE = re.compile(r'{}/(\w+)'.format(CUSTOMER_URL_RE))
 PLAN_URL_BASE = '{}/v1/plans/'.format(stripe.api_base)
 PLAN_URL_RE = re.compile(r'{}(\w+)'.format(PLAN_URL_BASE))
-SUBSCRIPTION_URL_BASE = '{}/v1/subscriptions/'.format(stripe.api_base)
-SUBSCRIPTION_URL_RE = re.compile(r'{}(\w+)'.format(SUBSCRIPTION_URL_BASE))
+SUBSCRIPTION_URL_BASE = '{}/v1/subscriptions'.format(stripe.api_base)
+SUBSCRIPTION_URL_RE = re.compile(r'{}/(\w+)'.format(SUBSCRIPTION_URL_BASE))
 
 
 def customer_not_found(request):
@@ -283,20 +284,31 @@ class StripeMockAPI(object):
         )
 
         if self.customer_subscriptions:
+            # get all subscriptions globally
+            subscriptions = []
+
             for customer_id, subs in self.customer_subscriptions.items():
                 for sub in subs:
                     add_response(
                         'GET',
-                        '{}{}'.format(SUBSCRIPTION_URL_BASE, sub['id']),
+                        '{}/{}'.format(SUBSCRIPTION_URL_BASE, sub['id']),
                         sub,
                         200,
                     )
+                    subscriptions.append(sub)
                 add_response(
                     'GET',
-                    '{}{}/subscriptions'.format(CUSTOMER_URL_BASE, customer_id),
+                    '{}/{}/subscriptions'.format(CUSTOMER_URL_BASE, customer_id),
                     fake_customer_subscriptions(customer_id, subs),
                     200,
                 )
+
+            add_response(
+                'GET',
+                SUBSCRIPTION_URL_BASE,
+                fake_subscriptions(subscriptions),
+                200,
+            )
 
         add_callback(
             'GET',
@@ -315,7 +327,7 @@ class StripeMockAPI(object):
                     )
                 add_response(
                     'GET',
-                    '{}{}/sources'.format(CUSTOMER_URL_BASE, customer_id),
+                    '{}/{}/sources'.format(CUSTOMER_URL_BASE, customer_id),
                     fake_customer_sources(customer_id, sources),
                     200,
                 )
@@ -330,7 +342,7 @@ class StripeMockAPI(object):
             for c in self.customers:
                 add_response(
                     'GET',
-                    '{}{}'.format(CUSTOMER_URL_BASE, c['id']),
+                    '{}/{}'.format(CUSTOMER_URL_BASE, c['id']),
                     c,
                     200,
                 )

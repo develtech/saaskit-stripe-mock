@@ -52,6 +52,8 @@ def test_subscriptions():
     subscription = stripe.Subscription.retrieve(subscription_id)
     assert subscription.id == subscription_id
 
+    assert len(stripe.Subscription.list()) == 1
+
     subscription_404_id = 'sub_that_doesnt_exist'
     message = 'No such subscription: {}'.format(subscription_404_id)
     with pytest.raises(stripe.error.InvalidRequestError, message=message):
