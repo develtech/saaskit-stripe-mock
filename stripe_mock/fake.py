@@ -3,16 +3,6 @@
 from faker import Faker
 
 
-def fake_empty_sources(customer_id):
-    return {
-        'data': [],
-        'has_more': False,
-        'object': 'list',
-        'total_count': 0,
-        'url': '/v1/customers/{}/sources'.format(customer_id),
-    }
-
-
 def fake_subscriptions(subscription_list):
     """Fake the subscription listings (globally).
 
@@ -83,7 +73,7 @@ def fake_customer(customer_id, **kwargs):
         'metadata': {},
         'object': 'customer',
         'shipping': None,
-        'sources': fake_empty_sources(customer_id)
+        'sources': fake_customer_sources(customer_id, [])
     }, **kwargs}
 
 
