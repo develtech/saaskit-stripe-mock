@@ -77,6 +77,36 @@ def fake_customer(customer_id, **kwargs):
     }, **kwargs}
 
 
+def fake_coupon(coupon_id, **kwargs):
+    return {**{
+        'amount_off': 1500,
+        'created': 1513532343,
+        'currency': 'usd',
+        'duration': 'once',
+        'duration_in_months': None,
+        'id': coupon_id,
+        'livemode': False,
+        'max_redemptions': 5,
+        'metadata': {},
+        'object': 'coupon',
+        'percent_off': None,
+        'redeem_by': 1515650399,
+        'times_redeemed': 1,
+        'valid': True
+    }, **kwargs}
+
+
+def fake_customer_discount(customer_id, subscription_id=None, **kwargs):
+    return {**{
+        'coupon': fake_coupon('my-coupon'),
+        'customer': customer_id,
+        'end': None,
+        'object': 'discount',
+        'start': 1513532388,
+        'subscription': subscription_id,
+    }, **kwargs}
+
+
 def fake_customer_source(customer_id, **kwargs):
     return {**{
         'address_city': 'new york',
