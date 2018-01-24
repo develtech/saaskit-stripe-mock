@@ -5,7 +5,6 @@ from ..fake import (
     fake_customer_sources,
     fake_customer_subscriptions,
     fake_empty_sources,
-    fake_empty_subscriptions,
     fake_plan,
     fake_source,
     fake_subscription,
@@ -53,9 +52,3 @@ def test_fake_empty_sources():
     customer_id = 'cus_ok'
     source = fake_empty_sources(customer_id)
     assert customer_id in source['url']
-
-
-def test_fake_empty_subscriptions():
-    customer_id = 'cus_ok'
-    subscriptions = fake_empty_subscriptions(customer_id)
-    assert customer_id in subscriptions['url']
