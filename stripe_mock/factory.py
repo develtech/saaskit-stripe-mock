@@ -191,7 +191,17 @@ class StripeMockAPI(object):
     customers = []
     customer_sources = {}
     customer_subscriptions = {}
+    customer_discounts = {}
+    subscription_discounts = {}
+    coupons = []
     plans = []
+
+    @property
+    def subscriptions(self):
+        return [
+            sub for sub in
+            [subs for _, subs in self.customer_subscriptions.items()]
+        ]
 
     def add_customer(self, customer_id, **kwargs):
         """
@@ -284,9 +294,6 @@ class StripeMockAPI(object):
         )
 
         if self.customer_subscriptions:
-            # get all subscriptions globally
-            subscriptions = []
-
             for customer_id, subs in self.customer_subscriptions.items():
                 for sub in subs:
                     add_response(
@@ -295,7 +302,6 @@ class StripeMockAPI(object):
                         sub,
                         200,
                     )
-                    subscriptions.append(sub)
                 add_response(
                     'GET',
                     '{}/{}/subscriptions'.format(CUSTOMER_URL_BASE, customer_id),
@@ -306,7 +312,7 @@ class StripeMockAPI(object):
             add_response(
                 'GET',
                 SUBSCRIPTION_URL_BASE,
-                fake_subscriptions(subscriptions),
+                fake_subscriptions(self.subscriptions),
                 200,
             )
 
