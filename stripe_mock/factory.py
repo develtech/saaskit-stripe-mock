@@ -9,6 +9,8 @@ from .fake import fake_customer, fake_plan, fake_source, fake_subscription
 
 CUSTOMER_URL_BASE = '{}/v1/customers/'.format(stripe.api_base)
 CUSTOMER_URL_RE = re.compile(r'{}(\w+)'.format(CUSTOMER_URL_BASE))
+SOURCE_URL_BASE = '{}/sources/'.format(CUSTOMER_URL_BASE)
+SOURCE_URL_RE = re.compile(r'{}/(\w+)'.format(CUSTOMER_URL_RE))
 PLAN_URL_BASE = '{}/v1/plans/'.format(stripe.api_base)
 PLAN_URL_RE = re.compile(r'{}(\w+)'.format(PLAN_URL_BASE))
 SUBSCRIPTION_URL_BASE = '{}/v1/subscriptions/'.format(stripe.api_base)
@@ -72,6 +74,25 @@ def subscription_not_found(request):
         })
 
 
+def source_not_found(request):
+    """Callback for source not being found, for responses.
+
+    :param request: request object from responses
+    :type request: :class:`requests.Request`
+    :returns: signature required by :meth:`responses.add_callback`
+    :rtype: (int, dict, dict) (status, headers, body)
+    """
+    source_id = SOURCE_URL_RE.match(request.url).group(2)
+    return (
+        404, {}, {
+            'error': {
+                'type': 'invalid_request_error',
+                'message': 'No such source: {}'.format(source_id),
+                'param': 'id'
+            }
+        })
+
+
 def add_response(method, url, body, status):
     """Utility function to register a responses mock.
 
@@ -128,6 +149,10 @@ def add_callback(method, url, cb):
 class StripeMockAPI(object):
 
     """Sets responses against the stripe API with dummy data.
+
+    In addition to providing an API for adding stripe data and mocking
+    network calls in requests (via responses), it acts a storage object for
+    customers, plans, and sources.
 
     Mocks by setting/deleting the responses singleton object.
 
@@ -230,7 +255,7 @@ class StripeMockAPI(object):
             fake_subscription(subscription_id, customer_id, **kwargs),
         )
 
-    def sync(self):
+    def sync(self):  # NOQA C901
         """Clear and recreate all responses based on stripe objects."""
 
         responses.reset()
@@ -264,6 +289,22 @@ class StripeMockAPI(object):
             'GET',
             SUBSCRIPTION_URL_RE,
             subscription_not_found,
+        )
+
+        if self.customer_sources:
+            for customer_id, sources in self.customer_sources.items():
+                for source in sources:
+                    add_response(
+                        'GET',
+                        '{}{}'.format(SOURCE_URL_BASE, source['id']),
+                        source,
+                        200,
+                    )
+
+        add_callback(
+            'GET',
+            SOURCE_URL_RE,
+            source_not_found,
         )
 
         if self.customers:
