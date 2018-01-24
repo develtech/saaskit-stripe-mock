@@ -23,6 +23,44 @@ def fake_empty_subscriptions(customer_id):
     }
 
 
+def fake_customer_subscriptions(customer_id, subscription_list):
+    """Fake the subscription listings for a customer.
+
+    :param customer_id: stripe customer id
+    :type customer_id: string
+    :param subscription_list: list of subscription data
+    :type subscription_list: list[dict]
+    :returns: response of data immitating stripe's listing
+    :rtype: dict
+    """
+    return {
+        'data': subscription_list,
+        'has_more': False,
+        'object': 'list',
+        'total_count': len(subscription_list),
+        'url': '/v1/customers/{}/subscriptions'.format(customer_id),
+    }
+
+
+def fake_customer_sources(customer_id, source_list):
+    """Fake the source listings for a customer.
+
+    :param customer_id: stripe customer id
+    :type customer_id: string
+    :param source_list: list of source data
+    :type source_list: list[dict]
+    :returns: response of data immitating stripe's listing
+    :rtype: dict
+    """
+    return {
+        'data': source_list,
+        'has_more': False,
+        'object': 'list',
+        'total_count': len(source_list),
+        'url': '/v1/customers/{}/sources'.format(customer_id),
+    }
+
+
 def fake_customer(customer_id, **kwargs):
     return {**{
         'account_balance': 0,

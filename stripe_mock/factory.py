@@ -5,7 +5,14 @@ import re
 import responses
 import stripe
 
-from .fake import fake_customer, fake_plan, fake_source, fake_subscription
+from .fake import (
+    fake_customer,
+    fake_customer_sources,
+    fake_customer_subscriptions,
+    fake_plan,
+    fake_source,
+    fake_subscription,
+)
 
 CUSTOMER_URL_BASE = '{}/v1/customers/'.format(stripe.api_base)
 CUSTOMER_URL_RE = re.compile(r'{}(\w+)'.format(CUSTOMER_URL_BASE))
@@ -284,6 +291,12 @@ class StripeMockAPI(object):
                         sub,
                         200,
                     )
+                add_response(
+                    'GET',
+                    '{}{}/subscriptions'.format(CUSTOMER_URL_BASE, customer_id),
+                    fake_customer_subscriptions(customer_id, subs),
+                    200,
+                )
 
         add_callback(
             'GET',
@@ -300,6 +313,12 @@ class StripeMockAPI(object):
                         source,
                         200,
                     )
+                add_response(
+                    'GET',
+                    '{}{}/sources'.format(CUSTOMER_URL_BASE, customer_id),
+                    fake_customer_sources(customer_id, sources),
+                    200,
+                )
 
         add_callback(
             'GET',
