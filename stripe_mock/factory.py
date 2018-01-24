@@ -198,6 +198,11 @@ class StripeMockAPI(object):
 
     @property
     def subscriptions(self):
+        """Return all subscriptions in stripe storage, regardless of customer.
+
+        :returns: list of subscriptions
+        :rtype: list[dict]
+        """
         return [
             sub for sub in
             [subs for _, subs in self.customer_subscriptions.items()]
