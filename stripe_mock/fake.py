@@ -13,6 +13,23 @@ def fake_empty_sources(customer_id):
     }
 
 
+def fake_subscriptions(subscription_list):
+    """Fake the subscription listings (globally).
+
+    :param subscription_list: list of subscription data
+    :type subscription_list: list[dict]
+    :returns: response of data immitating stripe's listing
+    :rtype: dict
+    """
+    return {
+        'data': subscription_list,
+        'has_more': False,
+        'object': 'list',
+        'total_count': len(subscription_list),
+        'url': '/v1/subscriptions',
+    }
+
+
 def fake_empty_subscriptions(customer_id):
     return {
         'data': [],
