@@ -39,3 +39,20 @@ def test_plans():
     message = 'No such plan: {}'.format(plan_404_id)
     with pytest.raises(stripe.error.InvalidRequestError, message=message):
         stripe.Plan.retrieve(plan_404_id)
+
+
+@responses.activate
+def test_subscriptions():
+    s = StripeMockAPI()
+    customer_id = 'cus_hihi'
+    subscription_id = 'sub_CAmsLPVVHEQadsfd'
+    s.add_subscription(customer_id, subscription_id)
+    s.sync()
+
+    subscription = stripe.Subscription.retrieve(subscription_id)
+    assert subscription.id == subscription_id
+
+    subscription_404_id = 'sub_that_doesnt_exist'
+    message = 'No such subscription: {}'.format(subscription_404_id)
+    with pytest.raises(stripe.error.InvalidRequestError, message=message):
+        stripe.Subscription.retrieve(subscription_404_id)

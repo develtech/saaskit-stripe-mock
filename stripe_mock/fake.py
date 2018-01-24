@@ -13,6 +13,16 @@ def fake_empty_sources(customer_id):
     }
 
 
+def fake_empty_subscriptions(customer_id):
+    return {
+        'data': [],
+        'has_more': False,
+        'object': 'list',
+        'total_count': 0,
+        'url': '/v1/customers/{}/subscriptions'.format(customer_id),
+    }
+
+
 def fake_customer(customer_id, **kwargs):
     return {**{
         'account_balance': 0,
@@ -74,4 +84,93 @@ def fake_plan(plan_id, **kwargs):
         'object': 'plan',
         'statement_descriptor': None,
         'trial_period_days': None
+    }, **kwargs}
+
+
+def fake_subscription(subscription_id, customer_id, **kwargs):
+    return {**{
+        'application_fee_percent': None,
+        'billing': 'charge_automatically',
+        'cancel_at_period_end': False,
+        'canceled_at': None,
+        'created': 1513273056,
+        'current_period_end': 1515951456,
+        'current_period_start': 1513273056,
+        'customer': customer_id,
+        'days_until_due': None,
+        'discount': {
+            'coupon': {
+                'amount_off': 1500,
+                'created': 1513532343,
+                'currency': 'usd',
+                'duration': 'once',
+                'duration_in_months': None,
+                'id': '15-off',
+                'livemode': False,
+                'max_redemptions': 5,
+                'metadata': {},
+                'object': 'coupon',
+                'percent_off': None,
+                'redeem_by': 1515650399,
+                'times_redeemed': 2,
+                'valid': True
+            },
+            'customer': 'cus_Bwrbeyo88aaUYP',
+            'end': None,
+            'object': 'discount',
+            'start': 1513532569,
+            'subscription': 'sub_BwuTCVDt1Klbil'
+        },
+        'ended_at': None,
+        'id': subscription_id,
+        'items': {
+            'data': [{
+                'created': 1513273056,
+                'id': 'si_BwuToPkPLdw9g0',
+                'metadata': {},
+                'object': 'subscription_item',
+                'plan': {
+                    'amount': 999,
+                    'created': 1513273051,
+                    'currency': 'usd',
+                    'id': 'develtech_999',
+                    'interval': 'month',
+                    'interval_count': 1,
+                    'livemode': False,
+                    'metadata': {},
+                    'name': 'Devel.tech 9.99',
+                    'object': 'plan',
+                    'statement_descriptor': None,
+                    'trial_period_days': None
+                },
+                'quantity': 1
+            }],
+            'has_more': False,
+            'object': 'list',
+            'total_count': 1,
+            'url': '/v1/subscription_items?subscription=sub_BwuTCVDt1Klbil'
+        },
+        'livemode': False,
+        'metadata': {},
+        'object': 'subscription',
+        'plan': {
+            'amount': 999,
+            'created': 1513273051,
+            'currency': 'usd',
+            'id': 'develtech_999',
+            'interval': 'month',
+            'interval_count': 1,
+            'livemode': False,
+            'metadata': {},
+            'name': 'Devel.tech 9.99',
+            'object': 'plan',
+            'statement_descriptor': None,
+            'trial_period_days': None
+        },
+        'quantity': 1,
+        'start': 1513273056,
+        'status': 'active',
+        'tax_percent': None,
+        'trial_end': None,
+        'trial_start': None
     }, **kwargs}
