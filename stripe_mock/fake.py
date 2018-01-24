@@ -20,6 +20,23 @@ def fake_subscriptions(subscription_list):
     }
 
 
+def fake_coupons(coupon_list):
+    """Fake the coupon listings (globally).
+
+    :param coupon_list: list of coupon data
+    :type coupon_list: list[dict]
+    :returns: response of data immitating stripe's listing
+    :rtype: dict
+    """
+    return {
+        'data': coupon_list,
+        'has_more': False,
+        'object': 'list',
+        'total_count': len(coupon_list),
+        'url': '/v1/coupons',
+    }
+
+
 def fake_customer_subscriptions(customer_id, subscription_list):
     """Fake the subscription listings for a customer.
 

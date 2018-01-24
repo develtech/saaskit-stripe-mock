@@ -2,6 +2,8 @@
 import responses
 
 from .fake import (
+    fake_coupon,
+    fake_coupons,
     fake_customer,
     fake_customer_source,
     fake_customer_sources,
@@ -12,6 +14,8 @@ from .fake import (
 )
 from .helpers import add_callback, add_response
 from .patterns import (
+    COUPON_URL_BASE,
+    COUPON_URL_RE,
     CUSTOMER_URL_BASE,
     CUSTOMER_URL_RE,
     PLAN_URL_BASE,
@@ -22,6 +26,7 @@ from .patterns import (
     SUBSCRIPTION_URL_RE,
 )
 from .response_callbacks import (
+    coupon_not_found,
     customer_not_found,
     plan_not_found,
     source_not_found,
@@ -135,6 +140,19 @@ class StripeMockAPI(object):
         # add plan
         self.plans.append(fake_plan(plan_id, **kwargs))
 
+    def add_coupon(self, coupon_id, **kwargs):
+        """
+        If sources exist in kwargs, add_source will be triggered automatically.
+        """
+        for idx, c in enumerate(self.coupons):
+            # coupon already exists, overwrite properties
+            if coupon_id == c.id:
+                self.coupons[idx].update(kwargs)
+                return
+
+        # add coupon
+        self.coupons.append(fake_coupon(coupon_id, **kwargs))
+
     def add_subscription(self, customer_id, subscription_id, **kwargs):
         """
         If sources exist in kwargs, add_source will be triggered automatically.
@@ -162,7 +180,7 @@ class StripeMockAPI(object):
             for p in self.plans:
                 add_response(
                     'GET',
-                    '{}{}'.format(PLAN_URL_BASE, p['id']),
+                    '{}/{}'.format(PLAN_URL_BASE, p['id']),
                     p,
                     200,
                 )
@@ -171,6 +189,27 @@ class StripeMockAPI(object):
             'GET',
             PLAN_URL_RE,
             plan_not_found,
+        )
+
+        if self.coupons:
+            for p in self.coupons:
+                add_response(
+                    'GET',
+                    '{}/{}'.format(COUPON_URL_BASE, p['id']),
+                    p,
+                    200,
+                )
+            add_response(
+                'GET',
+                COUPON_URL_BASE,
+                fake_coupons(self.coupons),
+                200,
+            )
+
+        add_callback(
+            'GET',
+            COUPON_URL_RE,
+            coupon_not_found,
         )
 
         if self.customer_subscriptions:
