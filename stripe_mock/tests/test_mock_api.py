@@ -8,7 +8,7 @@ from ..factory import StripeMockAPI
 
 
 @responses.activate
-def test_stripe_mock_api():
+def test_customers():
     customer_id = 'cus_hihi'
 
     s = StripeMockAPI()
@@ -24,6 +24,10 @@ def test_stripe_mock_api():
     with pytest.raises(stripe.error.InvalidRequestError, message=message):
         stripe.Customer.retrieve(customer_404_id)
 
+
+@responses.activate
+def test_plans():
+    s = StripeMockAPI()
     plan_id = 'my_special_plan'
     s.add_plan(plan_id)
     s.sync()
