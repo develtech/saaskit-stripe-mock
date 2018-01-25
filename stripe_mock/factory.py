@@ -90,6 +90,19 @@ class StripeMockAPI(object):
             [subs for _, subs in self.customer_subscriptions.items()]
         ]
 
+    @property
+    def sources(self):
+        """Return all sources in stripe storage, regardless of customer.
+
+        :returns: list of sources
+        :rtype: list[dict]
+        """
+        return [
+            src for src in
+            [srcs for _, srcs in self.customer_sources.items()]
+        ]
+
+
     def add_customer(self, customer_id, **kwargs):
         """
         If sources exist in kwargs, add_source will be triggered automatically.
@@ -103,11 +116,13 @@ class StripeMockAPI(object):
         # add customer
         self.customers.append(fake_customer(customer_id, **kwargs))
 
-    def add_source(self, customer_id, **kwargs):
+    def add_source(self, customer_id, source_id, **kwargs):
         """Add a source for a customer ID.
 
         :param customer_id: customer id to add source for
         :type customer_id: string
+        :param source_id: source id to add source for
+        :type source_id: string
 
         Reminder: Stripe sources are always attached customers.
 
@@ -121,7 +136,7 @@ class StripeMockAPI(object):
 
         for idx, source in enumerate(self.customer_sources[customer_id]):
             # existing source?
-            if kwargs['id'] == source['id']:  # update and return void
+            if source_id == source['id']:  # update and return void
                 self.customer_sources[customer_id][idx].update(kwargs)
                 return
 
@@ -264,6 +279,12 @@ class StripeMockAPI(object):
                     fake_customer_sources(customer_id, sources),
                     200,
                 )
+            add_response(
+                'GET',
+                SOURCES_URL_RE,
+                fake_customer_source(self.sources),
+                200,
+            )
 
         add_callback(
             'GET',
