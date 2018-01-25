@@ -72,12 +72,14 @@ def test_subscriptions():
 @responses.activate
 def test_sources():
     s = StripeMockAPI()
+
     customer_id = 'cus_hihi'
     source_id = 'src_CAmsLPVVHEQadsfd'
+
     s.add_source(customer_id, source_id)
     s.add_customer(customer_id)
-
     s.sync()
+
     customer = stripe.Customer.retrieve(customer_id)
     source = stripe.Source.retrieve(source_id)
 
@@ -90,6 +92,31 @@ def test_sources():
     message = 'No such source: {}'.format(source_404_id)
     with pytest.raises(stripe.error.InvalidRequestError, message=message):
         stripe.Source.retrieve(source_404_id)
+
+
+@responses.activate
+def test_cards():
+    s = StripeMockAPI()
+
+    customer_id = 'cus_hihi'
+    card_id = 'card_CAmsLPVVHEQadsfd'
+    s.add_source_card(customer_id, card_id)
+    s.add_customer(customer_id)
+
+    s.sync()
+    customer = stripe.Customer.retrieve(customer_id)
+
+    assert len(customer.sources.list()) == 1
+    s.sync()
+    assert len(customer.sources.list(object='card')) == 1
+    assert len(customer.sources.list(object='bank_account')) == 0
+
+    assert customer.sources.retrieve(card_id).id == card_id
+
+    source_404_id = 'card_that_doesnt_exist'
+    message = 'No such source: {}'.format(source_404_id)
+    with pytest.raises(stripe.error.InvalidRequestError, message=message):
+        customer.sources.retrieve(source_404_id)
 
 
 @responses.activate

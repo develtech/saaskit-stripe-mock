@@ -22,7 +22,8 @@ from .helpers import add_callback, add_response
 from .patterns import (
     COUPON_URL_BASE,
     COUPON_URL_RE,
-    CUSTOMER_SOURCE_URL_RE,
+    CUSTOMER_SOURCE_OBJECT_URL_RE,
+    CUSTOMER_SOURCE_LIST_URL_RE,
     CUSTOMER_URL_BASE,
     CUSTOMER_URL_RE,
     PLAN_URL_BASE,
@@ -38,6 +39,7 @@ from .response_callbacks import (
     customer_source_not_found,
     plan_not_found,
     source_callback_factory,
+    source_list_callback_factory,
     source_not_found,
     subscription_not_found,
 )
@@ -372,9 +374,6 @@ class StripeMockAPI(object):
                     )
 
                 # this includes *all sources*
-                print(sources)
-                print(len(sources))
-                print([s['id'] for s in sources])
                 add_response(
                     'GET',
                     '{}/{}/sources'.format(CUSTOMER_URL_BASE, customer_id),
@@ -385,19 +384,19 @@ class StripeMockAPI(object):
         add_callback(
             'GET',
             SOURCE_URL_RE,
+            source_callback_factory(self.sources_list, blocked_objects=['card']),
+        )
+
+        add_callback(
+            'GET',
+            CUSTOMER_SOURCE_OBJECT_URL_RE,
             source_callback_factory(self.sources_list),
         )
 
         add_callback(
             'GET',
-            SOURCE_URL_RE,
-            source_not_found,
-        )
-
-        add_callback(
-            'GET',
-            CUSTOMER_SOURCE_URL_RE,
-            customer_source_not_found,
+            CUSTOMER_SOURCE_LIST_URL_RE,
+            source_list_callback_factory(self.sources_list),
         )
 
         if self.customers:

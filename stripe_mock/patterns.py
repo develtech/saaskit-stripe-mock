@@ -5,8 +5,12 @@ import stripe
 
 CUSTOMER_URL_BASE = '{}/v1/customers'.format(stripe.api_base)
 CUSTOMER_URL_RE = re.compile(r'{}/(\w+)'.format(CUSTOMER_URL_BASE))
-CUSTOMER_SOURCE_URL_BASE = '{}/sources'.format(CUSTOMER_URL_BASE)
-CUSTOMER_SOURCE_URL_RE = re.compile(r'{}/sources/(\w+)'.format(CUSTOMER_URL_RE))
+CUSTOMER_SOURCE_OBJECT_URL_RE = re.compile(
+    r'{}/(\w+)/sources(\w+)'.format(CUSTOMER_URL_BASE)
+)
+CUSTOMER_SOURCE_LIST_URL_RE = re.compile(
+    r'{}/(\w+)/sources(\?object=(\w+)?)?'.format(CUSTOMER_URL_BASE)
+)
 SOURCE_URL_BASE = '{}/v1/sources'.format(stripe.api_base)
 SOURCE_URL_RE = re.compile(r'{}/(\w+)'.format(SOURCE_URL_BASE))
 PLAN_URL_BASE = '{}/v1/plans'.format(stripe.api_base)
