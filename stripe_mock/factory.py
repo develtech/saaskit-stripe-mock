@@ -128,14 +128,12 @@ class StripeMockAPI(object):
         self.customers.append(fake_customer(customer_id, **kwargs))
 
     def add_source(self, customer_id, source_id, **kwargs):
-        """Add a source for a customer ID.
+        """Add a source attached to customer ID.
 
         :param customer_id: customer id to add source for
         :type customer_id: string
         :param source_id: source id to add source for
         :type source_id: string
-
-        Reminder: Stripe sources are always attached customers.
 
         Behavioral notes:
 
@@ -156,8 +154,67 @@ class StripeMockAPI(object):
             fake_customer_source(customer_id, source_id, **kwargs),
         )
 
-    def add_plan(self, plan_id, **kwargs):
+    def add_source_card(self, customer_id, card_id, **kwargs):
+        """Add a card source attached to a customer ID.
+
+        :param customer_id: customer id to add source for
+        :type customer_id: string
+        :param card_id: card id to add source for
+        :type card_id: string
+
+        Reminder: Stripe card sources are always attached customers.
+
+        Behavioral notes:
+
+        If card ID already exists, overwrite properties.
         """
+
+        if customer_id not in self.customer_source_cards:
+            self.customer_source_cards[customer_id] = []
+
+        for idx, source in enumerate(self.customer_source_cards[customer_id]):
+            # existing source?
+            if card_id == source['id']:  # update and return void
+                self.customer_source_cards[customer_id][idx].update(kwargs)
+                return
+
+        # new source, append
+        self.customer_source_cards[customer_id].append(
+            fake_customer_source_card(customer_id, card_id, **kwargs),
+        )
+
+    def add_source_bank_account(self, customer_id, bank_account_id, **kwargs):
+        """Add a bank_account source attached to a customer ID.
+
+        :param customer_id: customer id to add source for
+        :type customer_id: string
+        :param bank_account_id: bank_account id to add source for
+        :type bank_account_id: string
+
+        Reminder: Stripe bank_account sources are always attached customers.
+
+        Behavioral notes:
+
+        If bank_account ID already exists, overwrite properties.
+        """
+
+        if customer_id not in self.customer_source_bank_accounts:
+            self.customer_source_bank_accounts[customer_id] = []
+
+        for idx, source in enumerate(self.customer_source_bank_accounts[customer_id]):
+            # existing source?
+            if bank_account_id == source['id']:  # update and return void
+                self.customer_source_bank_accounts[customer_id][idx].update(kwargs)
+                return
+
+        # new source, append
+        self.customer_source_bank_accounts[customer_id].append(
+            fake_customer_source_bank_account(customer_id, bank_account_id, **kwargs),
+        )
+
+    def add_plan(self, plan_id, **kwargs):
+        """Add a plan.
+
         If sources exist in kwargs, add_source will be triggered automatically.
         """
         for idx, c in enumerate(self.plans):
