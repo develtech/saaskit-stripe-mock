@@ -77,15 +77,17 @@ class StripeMockAPI(object):
         s = StripeResponses()
 
     """
-    customers = []
-    customer_sources = {}
-    customer_source_cards = {}
-    customer_source_bank_accounts = {}
-    customer_subscriptions = {}
-    customer_discounts = {}
-    subscription_discounts = {}
-    coupons = []
-    plans = []
+
+    def __init__(self):
+        self.customers = []
+        self.customer_sources = {}
+        self.customer_source_cards = {}
+        self.customer_source_bank_accounts = {}
+        self.customer_subscriptions = {}
+        self.customer_discounts = {}
+        self.subscription_discounts = {}
+        self.coupons = []
+        self.plans = []
 
     @property
     def subscriptions(self):
@@ -105,6 +107,20 @@ class StripeMockAPI(object):
 
         :returns: list of sources
         :rtype: list[dict]
+        """
+        sources = {}
+        for source in self.sources_list:
+            customer_id = source['customer']
+            if customer_id not in sources:
+                sources[customer_id] = []
+
+            sources[customer_id].append(source)
+        return sources
+
+    @property
+    def sources_list(self):
+        """
+        Return a list
         """
         return [
             src for src in itertools.chain(
@@ -335,12 +351,11 @@ class StripeMockAPI(object):
             subscription_not_found,
         )
 
-        if self.customer_sources:
+        if self.sources:
             # sources are different, they can be gotten via Customer,
             # but in some instances, globally.
-            for customer_id, sources in self.customer_sources.items():
+            for customer_id, sources in self.sources.items():
                 for source in sources:
-                    print(source['id'])
                     add_response(
                         'GET',
                         '{}/{}/sources/{}'.format(
@@ -355,6 +370,11 @@ class StripeMockAPI(object):
                         source,
                         200,
                     )
+
+                # this includes *all sources*
+                print(sources)
+                print(len(sources))
+                print([s['id'] for s in sources])
                 add_response(
                     'GET',
                     '{}/{}/sources'.format(CUSTOMER_URL_BASE, customer_id),
@@ -365,7 +385,7 @@ class StripeMockAPI(object):
         add_callback(
             'GET',
             SOURCE_URL_RE,
-            source_callback_factory(self.sources),
+            source_callback_factory(self.sources_list),
         )
 
         add_callback(
