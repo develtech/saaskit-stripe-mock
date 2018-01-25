@@ -84,6 +84,8 @@ def test_sources():
     assert source.id == source_id
     assert len(customer.sources.list()) == 1
 
+    assert customer.sources.retrieve(source_id)
+
     source_404_id = 'src_that_doesnt_exist'
     message = 'No such source: {}'.format(source_404_id)
     with pytest.raises(stripe.error.InvalidRequestError, message=message):
