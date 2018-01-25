@@ -160,29 +160,93 @@ def fake_customer_discount(customer_id, subscription_id=None, **kwargs):
 
 def fake_customer_source(customer_id, source_id, **kwargs):
     return {**{
-        'address_city': 'new york',
-        'address_country': 'usa',
-        'address_line1': 'McAllister St',
-        'address_line1_check': 'pass',
+        'id': source_id,
+        'object': 'source',
+        'amount': None,
+        'client_secret': 'src_client_secret_CCcMfsMBB8cXifLfF5nI1mT0',
+        'created': 1516895952,
+        'currency': 'usd',
+        'flow': 'receiver',
+        'livemode': False,
+        'metadata': {},
+        'owner': {
+            'address': None,
+            'email': 'jenny.rosen@example.com',
+            'name': None,
+            'phone': None,
+            'verified_address': None,
+            'verified_email': None,
+            'verified_name': None,
+            'verified_phone': None
+        },
+        'receiver': {
+            'address': '121042882-38381234567890123',
+            'amount_charged': 0,
+            'amount_received': 0,
+            'amount_returned': 0,
+            'refund_attributes_method': 'email',
+            'refund_attributes_status': 'missing'
+        },
+        'statement_descriptor': None,
+        'status': 'pending',
+        'type': 'ach_credit_transfer',
+        'usage': 'reusable',
+        'ach_credit_transfer': {
+            'account_number': 'test_52796e3294dc',
+            'routing_number': '110000000',
+            'fingerprint': 'ecpwEzmBOSMOqQTL',
+            'bank_name': 'TEST BANK',
+            'swift_code': 'TSTEZ122'
+        },
+        'customer': customer_id,
+    }, **kwargs}
+
+
+def fake_customer_source_bank_account(customer_id, bank_account_id, **kwargs):
+    return {**{
+        'id': bank_account_id,
+        'object': 'bank_account',
+        'account': 'acct_1032D82eZvKYlo2C',
+        'account_holder_name': 'Jane Austen',
+        'account_holder_type': 'individual',
+        'bank_name': 'STRIPE TEST BANK',
+        'country': 'US',
+        'currency': 'usd',
+        'default_for_currency': False,
+        'fingerprint': '1JWtPxqbdX5Gamtc',
+        'last4': '6789',
+        'metadata': {},
+        'routing_number': '110000000',
+        'status': 'new',
+        'customer': customer_id,
+    }, **kwargs}
+
+
+def fake_customer_source_card(customer_id, card_id, **kwargs):
+    return {**{
+        'id': card_id,
+        'object': 'card',
+        'address_city': None,
+        'address_country': None,
+        'address_line1': None,
+        'address_line1_check': None,
         'address_line2': None,
-        'address_state': 'ny',
-        'address_zip': '10013',
-        'address_zip_check': 'pass',
+        'address_state': None,
+        'address_zip': None,
+        'address_zip_check': None,
         'brand': 'Visa',
         'country': 'US',
         'customer': customer_id,
-        'cvc_check': 'pass',
+        'cvc_check': None,
         'dynamic_last4': None,
-        'exp_month': 4,
-        'exp_year': 2032,
-        'fingerprint': 'ZX4L088dUFClwtPD',
+        'exp_month': 8,
+        'exp_year': 2019,
+        'fingerprint': 'Xt5EWLLDS7FJjR1c',
         'funding': 'credit',
-        'id': source_id,
         'last4': '4242',
         'metadata': {},
-        'name': 'John Doe',
-        'object': 'card',
-        'tokenization_method': None,
+        'name': None,
+        'tokenization_method': None
     }, **kwargs}
 
 

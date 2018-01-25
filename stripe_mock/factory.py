@@ -8,6 +8,8 @@ from .fake import (
     fake_coupons,
     fake_customer,
     fake_customer_source,
+    fake_customer_source_card,
+    fake_customer_source_bank_account,
     fake_customer_sources,
     fake_customer_subscriptions,
     fake_customers,
