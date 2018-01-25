@@ -79,6 +79,8 @@ class StripeMockAPI(object):
     """
     customers = []
     customer_sources = {}
+    customer_source_cards = {}
+    customer_source_bank_accounts = {}
     customer_subscriptions = {}
     customer_discounts = {}
     subscription_discounts = {}
@@ -105,8 +107,11 @@ class StripeMockAPI(object):
         :rtype: list[dict]
         """
         return [
-            src for src in itertools.chain.from_iterable(
-                self.customer_sources.values())
+            src for src in itertools.chain(
+                *self.customer_sources.values(),
+                *self.customer_source_cards.values(),
+                *self.customer_source_bank_accounts.values(),
+            )
         ]
 
     def add_customer(self, customer_id, **kwargs):
@@ -148,7 +153,8 @@ class StripeMockAPI(object):
 
         # new source, append
         self.customer_sources[customer_id].append(
-            fake_customer_source(customer_id, source_id, **kwargs))
+            fake_customer_source(customer_id, source_id, **kwargs),
+        )
 
     def add_plan(self, plan_id, **kwargs):
         """
