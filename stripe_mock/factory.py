@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
+import itertools
+
 import responses
 
 from .fake import (
     fake_coupon,
     fake_coupons,
     fake_customer,
-    fake_customers,
     fake_customer_source,
     fake_customer_sources,
     fake_customer_subscriptions,
+    fake_customers,
     fake_plan,
     fake_plans,
     fake_subscription,
@@ -18,6 +20,7 @@ from .helpers import add_callback, add_response
 from .patterns import (
     COUPON_URL_BASE,
     COUPON_URL_RE,
+    CUSTOMER_SOURCE_URL_RE,
     CUSTOMER_URL_BASE,
     CUSTOMER_URL_RE,
     PLAN_URL_BASE,
@@ -30,7 +33,9 @@ from .patterns import (
 from .response_callbacks import (
     coupon_not_found,
     customer_not_found,
+    customer_source_not_found,
     plan_not_found,
+    source_callback_factory,
     source_not_found,
     subscription_not_found,
 )
@@ -98,10 +103,9 @@ class StripeMockAPI(object):
         :rtype: list[dict]
         """
         return [
-            src for src in
-            [srcs for _, srcs in self.customer_sources.items()]
+            src for src in itertools.chain.from_iterable(
+                self.customer_sources.values())
         ]
-
 
     def add_customer(self, customer_id, **kwargs):
         """
@@ -142,7 +146,7 @@ class StripeMockAPI(object):
 
         # new source, append
         self.customer_sources[customer_id].append(
-            fake_customer_source(customer_id, **kwargs))
+            fake_customer_source(customer_id, source_id, **kwargs))
 
     def add_plan(self, plan_id, **kwargs):
         """
@@ -177,7 +181,8 @@ class StripeMockAPI(object):
         if customer_id not in self.customer_subscriptions:
             self.customer_subscriptions[customer_id] = []
 
-        for idx, subscription in enumerate(self.customer_subscriptions[customer_id]):
+        for idx, subscription in enumerate(
+                self.customer_subscriptions[customer_id]):
             # existing subscription?
             if kwargs['id'] == subscription['id']:  # update and return void
                 self.customer_subscriptions[customer_id][idx].update(kwargs)
@@ -246,7 +251,8 @@ class StripeMockAPI(object):
                     )
                 add_response(
                     'GET',
-                    '{}/{}/subscriptions'.format(CUSTOMER_URL_BASE, customer_id),
+                    '{}/{}/subscriptions'.format(
+                        CUSTOMER_URL_BASE, customer_id),
                     fake_customer_subscriptions(customer_id, subs),
                     200,
                 )
@@ -265,11 +271,21 @@ class StripeMockAPI(object):
         )
 
         if self.customer_sources:
+            # sources are different, they can be gotten via Customer,
+            # but in some instances, globally.
             for customer_id, sources in self.customer_sources.items():
                 for source in sources:
+                    print(source['id'])
                     add_response(
                         'GET',
-                        '{}{}'.format(SOURCE_URL_BASE, source['id']),
+                        '{}/sources/{}'.format(
+                            CUSTOMER_URL_BASE, customer_id, source['id']),
+                        source,
+                        200,
+                    )
+                    add_response(
+                        'GET',
+                        '{}/{}'.format(SOURCE_URL_BASE, source['id']),
                         source,
                         200,
                     )
@@ -279,17 +295,22 @@ class StripeMockAPI(object):
                     fake_customer_sources(customer_id, sources),
                     200,
                 )
-            add_response(
-                'GET',
-                SOURCES_URL_RE,
-                fake_customer_source(self.sources),
-                200,
-            )
+
+        add_callback(
+            'GET',
+            SOURCE_URL_RE,
+            source_callback_factory(self.sources),
+        )
 
         add_callback(
             'GET',
             SOURCE_URL_RE,
             source_not_found,
+        )
+        add_callback(
+            'GET',
+            CUSTOMER_SOURCE_URL_RE,
+            customer_source_not_found,
         )
 
         if self.customers:
@@ -297,18 +318,20 @@ class StripeMockAPI(object):
                 add_response(
                     'GET',
                     '{}/{}'.format(CUSTOMER_URL_BASE, c['id']),
-                    {**c, **{
-                        'subscriptions': fake_customer_subscriptions(
-                            c['id'],
-                            self.customer_subscriptions.get(c['id'], []),
-                        ),
-                        'sources': fake_customer_sources(
-                            c['id'],
-                            self.customer_sources.get(c['id'], []),
-                        ),
-                    }},
+                    {
+                        **c, **{
+                            'subscriptions': fake_customer_subscriptions(
+                                c['id'],
+                                self.customer_subscriptions.get(c['id'], []),
+                            ),
+                            'sources': fake_customer_sources(
+                                c['id'],
+                                self.customer_sources.get(c['id'], []),
+                            ),
+                        }
+                    },
                     200,
-                )
+                )  # yapf: disable
             add_response(
                 'GET',
                 CUSTOMER_URL_BASE,

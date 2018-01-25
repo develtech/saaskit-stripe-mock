@@ -158,7 +158,7 @@ def fake_customer_discount(customer_id, subscription_id=None, **kwargs):
     }, **kwargs}
 
 
-def fake_customer_source(customer_id, **kwargs):
+def fake_customer_source(customer_id, source_id, **kwargs):
     return {**{
         'address_city': 'new york',
         'address_country': 'usa',
@@ -177,7 +177,7 @@ def fake_customer_source(customer_id, **kwargs):
         'exp_year': 2032,
         'fingerprint': 'ZX4L088dUFClwtPD',
         'funding': 'credit',
-        'id': 'card_1BYxtEEzushJqDoiJUQkSyER',
+        'id': source_id,
         'last4': '4242',
         'metadata': {},
         'name': 'John Doe',
