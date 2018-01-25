@@ -278,8 +278,9 @@ class StripeMockAPI(object):
                     print(source['id'])
                     add_response(
                         'GET',
-                        '{}/sources/{}'.format(
-                            CUSTOMER_URL_BASE, customer_id, source['id']),
+                        '{}/{}/sources/{}'.format(
+                            CUSTOMER_URL_BASE, customer_id, source['id'],
+                        ),
                         source,
                         200,
                     )
@@ -307,6 +308,7 @@ class StripeMockAPI(object):
             SOURCE_URL_RE,
             source_not_found,
         )
+
         add_callback(
             'GET',
             CUSTOMER_SOURCE_URL_RE,
