@@ -16,10 +16,12 @@ def test_fake_customer():
     assert customer['id'] == customer_id
 
 
-def test_fake_source():
+def test_fake_customer_source():
     customer_id = 'cus_ok'
-    source = fake_customer_source(customer_id)
+    source_id = 'src_hihi'
+    source = fake_customer_source(customer_id, source_id)
     assert source['customer'] == customer_id
+    assert source['id'] == source_id
 
 
 def test_fake_plan():
