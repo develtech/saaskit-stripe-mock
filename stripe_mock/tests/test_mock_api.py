@@ -70,6 +70,27 @@ def test_subscriptions():
 
 
 @responses.activate
+def test_sources():
+    s = StripeMockAPI()
+    customer_id = 'cus_hihi'
+    source_id = 'src_CAmsLPVVHEQadsfd'
+    s.add_source(customer_id, source_id)
+    s.add_customer(customer_id)
+
+    s.sync()
+    customer = stripe.Customer.retrieve(customer_id)
+    source = stripe.Source.retrieve(source_id)
+
+    assert source.id == source_id
+    assert len(customer.sources.list()) == 1
+
+    source_404_id = 'src_that_doesnt_exist'
+    message = 'No such source: {}'.format(source_404_id)
+    with pytest.raises(stripe.error.InvalidRequestError, message=message):
+        stripe.Source.retrieve(source_404_id)
+
+
+@responses.activate
 def test_coupon():
     s = StripeMockAPI()
     coupon_id = 'my_coupon_thing'
