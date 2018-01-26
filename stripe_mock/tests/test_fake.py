@@ -33,7 +33,7 @@ def test_fake_plan():
 def test_fake_subscription():
     customer_id = 'cus_ok'
     subscription_id = 'test_subscription'
-    subscription = fake_subscription(subscription_id, customer_id)
+    subscription = fake_subscription(customer_id, subscription_id)
     assert subscription['id'] == subscription_id
 
 
