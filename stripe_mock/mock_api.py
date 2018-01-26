@@ -130,19 +130,6 @@ class StripeMockAPI(object):
             )
         ]
 
-    def add_customer(self, customer_id, **kwargs):
-        """
-        If sources exist in kwargs, add_source will be triggered automatically.
-        """
-        for idx, c in enumerate(self.customers):
-            # customer already exists, overwrite properties
-            if customer_id == c['id']:
-                self.customers[idx].update(kwargs)
-                return
-
-        # add customer
-        self.customers.append(fake_customer(customer_id, **kwargs))
-
     def _add_customer_object(
         self, customer_id, object_id, object_type, fake_fn, **kwargs,
     ):
@@ -231,6 +218,13 @@ class StripeMockAPI(object):
             fake_customer_source_bank_account, **kwargs,
         )
 
+    def add_subscription(self, customer_id, subscription_id, **kwargs):
+        """Add / Update a subscription for a customer."""
+        self._add_customer_object(
+            customer_id, subscription_id, 'subscription', fake_subscription,
+            **kwargs,
+        )
+
     def add_plan(self, plan_id, **kwargs):
         """Add a plan.
 
@@ -258,12 +252,18 @@ class StripeMockAPI(object):
         # add coupon
         self.coupons.append(fake_coupon(coupon_id, **kwargs))
 
-    def add_subscription(self, customer_id, subscription_id, **kwargs):
-        """Add / Update a subscription for a customer."""
-        self._add_customer_object(
-            customer_id, subscription_id, 'subscription', fake_subscription,
-            **kwargs,
-        )
+    def add_customer(self, customer_id, **kwargs):
+        """
+        If sources exist in kwargs, add_source will be triggered automatically.
+        """
+        for idx, c in enumerate(self.customers):
+            # customer already exists, overwrite properties
+            if customer_id == c['id']:
+                self.customers[idx].update(kwargs)
+                return
+
+        # add customer
+        self.customers.append(fake_customer(customer_id, **kwargs))
 
     def sync(self):  # NOQA C901
         """Clear and recreate all responses based on stripe objects."""
