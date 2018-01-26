@@ -70,15 +70,11 @@ def _add_customer_object(storage, customer_id, object_id, fake_fn, **kwargs):
         storage[customer_id] = []
 
     for idx, subscription in enumerate(storage[customer_id]):
-        # existing subscription?
         if kwargs['id'] == subscription['id']:  # update and return void
             storage[customer_id][idx].update(kwargs)
             return
 
-    # new subscription, append
-    storage[customer_id].append(
-        fake_fn(customer_id, object_id, **kwargs),
-    )
+    storage[customer_id].append(fake_fn(customer_id, object_id, **kwargs))  # add
 
 
 class StripeMockAPI(object):
