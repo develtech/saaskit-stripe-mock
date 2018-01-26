@@ -36,11 +36,9 @@ from .patterns import (
 from .response_callbacks import (
     coupon_not_found,
     customer_not_found,
-    customer_source_not_found,
     plan_not_found,
     source_callback_factory,
     source_list_callback_factory,
-    source_not_found,
     subscription_not_found,
 )
 

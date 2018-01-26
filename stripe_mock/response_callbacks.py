@@ -5,7 +5,6 @@ from .fake import fake_customer_sources
 from .patterns import (
     COUPON_URL_RE,
     CUSTOMER_SOURCE_LIST_URL_RE,
-    CUSTOMER_SOURCE_OBJECT_URL_RE,
     CUSTOMER_URL_RE,
     PLAN_URL_RE,
     SOURCE_URL_RE,
@@ -69,31 +68,6 @@ def subscription_not_found(request):
     return stripe_object_not_found('subscription', subscription_id)
 
 
-def customer_source_not_found(request):
-    """Callback for source not being found, for responses.
-
-    :param request: request object from responses
-    :type request: :class:`requests.Request`
-    :returns: signature required by :meth:`responses.add_callback`
-    :rtype: (int, dict, dict) (status, headers, body)
-    """
-    source_id = CUSTOMER_SOURCE_OBJECT_URL_RE.match(request.url).group(2)
-    return stripe_object_not_found('source', source_id)
-
-
-def source_not_found(request):
-    """Callback for source not being found, for responses.
-
-    :param request: request object from responses
-    :type request: :class:`requests.Request`
-    :returns: signature required by :meth:`responses.add_callback`
-    :rtype: (int, dict, dict) (status, headers, body)
-    """
-    source_id = SOURCE_URL_RE.match(request.url).group(1)
-
-    return stripe_object_not_found('source', source_id)
-
-
 def coupon_not_found(request):
     """Callback for coupon not being found, for responses.
 
@@ -126,7 +100,6 @@ def source_callback_factory(source_list, blocked_objects=[]):
     ]
 
     def request_callback(request):
-        print('hi', request.url)
         source_id = SOURCE_URL_RE.match(request.url).group(1)
         for source in cleaned_sources:
             if source_id == source['id']:
