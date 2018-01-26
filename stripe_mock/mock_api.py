@@ -52,6 +52,35 @@ def _add_object(storage, object_id, fake_fn, **kwargs):
     storage.append(fake_fn(object_id, **kwargs))  # add object
 
 
+def _add_customer_object(storage, customer_id, object_id, fake_fn, **kwargs):
+    """Generic function for storing / updating a customer-bound object.
+
+    Stripe objects bound to customer's all stored in an instance variable
+    where the customer is the key. For instance, for 'subscription'
+    object_type::
+
+        self.customer_subscriptions = {
+            '{customer_id}': [
+
+            ]
+        }
+    """
+
+    if customer_id not in storage:
+        storage[customer_id] = []
+
+    for idx, subscription in enumerate(storage[customer_id]):
+        # existing subscription?
+        if kwargs['id'] == subscription['id']:  # update and return void
+            storage[customer_id][idx].update(kwargs)
+            return
+
+    # new subscription, append
+    storage[customer_id].append(
+        fake_fn(customer_id, object_id, **kwargs),
+    )
+
+
 class StripeMockAPI(object):
 
     """Sets responses against the stripe API with dummy data.
@@ -139,37 +168,6 @@ class StripeMockAPI(object):
             )
         ]
 
-    def _add_customer_object(
-        self, customer_id, object_id, object_type, fake_fn, **kwargs,
-    ):
-        """Generic function for storing / updating a customer-bound object.
-
-        Stripe objects bound to customer's all stored in an instance variable
-        where the customer is the key. For instance, for 'subscription'
-        object_type::
-
-            self.customer_subscriptions = {
-                '{customer_id}': [
-
-                ]
-            }
-        """
-
-        storage = getattr(self, 'customer_{}s'.format(object_type))
-        if customer_id not in storage:
-            storage[customer_id] = []
-
-        for idx, subscription in enumerate(storage[customer_id]):
-            # existing subscription?
-            if kwargs['id'] == subscription['id']:  # update and return void
-                storage[customer_id][idx].update(kwargs)
-                return
-
-        # new subscription, append
-        storage[customer_id].append(
-            fake_fn(customer_id, object_id, **kwargs),
-        )
-
     def add_source(self, customer_id, source_id, **kwargs):
         """Add a source attached to customer ID.
 
@@ -182,9 +180,9 @@ class StripeMockAPI(object):
 
         If source ID already exists, overwrite properties.
         """
-        self._add_customer_object(
-            customer_id, source_id, 'source', fake_customer_source,
-            **kwargs,
+        _add_customer_object(
+            self.customer_sources, customer_id, source_id,
+            fake_customer_source, **kwargs,
         )
 
     def add_source_card(self, customer_id, card_id, **kwargs):
@@ -202,9 +200,9 @@ class StripeMockAPI(object):
         If card ID already exists, overwrite properties.
         """
 
-        self._add_customer_object(
-            customer_id, card_id, 'source_card', fake_customer_source_card,
-            **kwargs,
+        _add_customer_object(
+            self.customer_source_cards, customer_id, card_id,
+            fake_customer_source_card, **kwargs,
         )
 
     def add_source_bank_account(self, customer_id, bank_account_id, **kwargs):
@@ -222,16 +220,16 @@ class StripeMockAPI(object):
         If bank_account ID already exists, overwrite properties.
         """
 
-        self._add_customer_object(
-            customer_id, bank_account_id, 'source_bank_account',
+        _add_customer_object(
+            self.customer_source_bank_accounts, customer_id, bank_account_id,
             fake_customer_source_bank_account, **kwargs,
         )
 
     def add_subscription(self, customer_id, subscription_id, **kwargs):
         """Add / Update a subscription for a customer."""
-        self._add_customer_object(
-            customer_id, subscription_id, 'subscription', fake_subscription,
-            **kwargs,
+        _add_customer_object(
+            self.customer_subscriptions, customer_id, subscription_id,
+            fake_subscription, **kwargs,
         )
 
     def add_plan(self, plan_id, **kwargs):
