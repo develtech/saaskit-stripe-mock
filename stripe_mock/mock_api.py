@@ -5,18 +5,18 @@ import responses
 
 from .fake import (
     fake_coupon,
-    fake_coupons,
+    fake_coupon_list,
     fake_customer,
     fake_customer_source,
     fake_customer_source_card,
     fake_customer_source_bank_account,
     fake_customer_source_list,
     fake_customer_subscription_list,
-    fake_customers,
+    fake_customer_list,
     fake_plan,
-    fake_plans,
+    fake_plan_list,
     fake_subscription,
-    fake_subscriptions,
+    fake_subscription_list,
 )
 from .helpers import add_callback, add_response
 from .patterns import (
@@ -268,7 +268,7 @@ class StripeMockAPI(object):
             add_response(
                 'GET',
                 PLAN_URL_BASE,
-                fake_plans(self.plans),
+                fake_plan_list(self.plans),
                 200,
             )
 
@@ -289,7 +289,7 @@ class StripeMockAPI(object):
             add_response(
                 'GET',
                 COUPON_URL_BASE,
-                fake_coupons(self.coupons),
+                fake_coupon_list(self.coupons),
                 200,
             )
 
@@ -319,7 +319,7 @@ class StripeMockAPI(object):
             add_response(
                 'GET',
                 SUBSCRIPTION_URL_BASE,
-                fake_subscriptions(self.subscriptions),
+                fake_subscription_list(self.subscriptions),
                 200,
             )
 
@@ -397,7 +397,7 @@ class StripeMockAPI(object):
             add_response(
                 'GET',
                 CUSTOMER_URL_BASE,
-                fake_customers(self.customers),
+                fake_customer_list(self.customers),
                 200,
             )
 

@@ -23,7 +23,7 @@ def fake_generic_listing(object_list, object_type):
     }
 
 
-def fake_subscriptions(subscription_list):
+def fake_subscription_list(subscription_list):
     """Fake the subscription listings (globally).
 
     :param subscription_list: list of subscription data
@@ -34,7 +34,7 @@ def fake_subscriptions(subscription_list):
     return fake_generic_listing(subscription_list, 'subscription')
 
 
-def fake_coupons(coupon_list):
+def fake_coupon_list(coupon_list):
     """Fake the coupon listings (globally).
 
     :param coupon_list: list of coupon data
@@ -45,7 +45,7 @@ def fake_coupons(coupon_list):
     return fake_generic_listing(coupon_list, 'coupon')
 
 
-def fake_customers(customer_list):
+def fake_customer_list(customer_list):
     """Fake the customer listings (globally).
 
     :param customer_list: list of customer data
@@ -56,7 +56,7 @@ def fake_customers(customer_list):
     return fake_generic_listing(customer_list, 'customer')
 
 
-def fake_plans(plan_list):
+def fake_plan_list(plan_list):
     """Fake the plan listings (globally).
 
     :param plan_list: list of plan data
