@@ -206,18 +206,9 @@ class StripeMockAPI(object):
         If card ID already exists, overwrite properties.
         """
 
-        if customer_id not in self.customer_source_cards:
-            self.customer_source_cards[customer_id] = []
-
-        for idx, source in enumerate(self.customer_source_cards[customer_id]):
-            # existing source?
-            if card_id == source['id']:  # update and return void
-                self.customer_source_cards[customer_id][idx].update(kwargs)
-                return
-
-        # new source, append
-        self.customer_source_cards[customer_id].append(
-            fake_customer_source_card(customer_id, card_id, **kwargs),
+        self._add_customer_object(
+            customer_id, card_id, 'source_card', fake_customer_source_card,
+            **kwargs,
         )
 
     def add_source_bank_account(self, customer_id, bank_account_id, **kwargs):
@@ -235,18 +226,9 @@ class StripeMockAPI(object):
         If bank_account ID already exists, overwrite properties.
         """
 
-        if customer_id not in self.customer_source_bank_accounts:
-            self.customer_source_bank_accounts[customer_id] = []
-
-        for idx, source in enumerate(self.customer_source_bank_accounts[customer_id]):
-            # existing source?
-            if bank_account_id == source['id']:  # update and return void
-                self.customer_source_bank_accounts[customer_id][idx].update(kwargs)
-                return
-
-        # new source, append
-        self.customer_source_bank_accounts[customer_id].append(
-            fake_customer_source_bank_account(customer_id, bank_account_id, **kwargs),
+        self._add_customer_object(
+            customer_id, bank_account_id, 'source_bank_account',
+            fake_customer_source_bank_account, **kwargs,
         )
 
     def add_plan(self, plan_id, **kwargs):
