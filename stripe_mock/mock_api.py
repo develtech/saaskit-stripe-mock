@@ -225,45 +225,32 @@ class StripeMockAPI(object):
             **kwargs,
         )
 
-    def add_plan(self, plan_id, **kwargs):
-        """Add a plan.
+    def _add_object(
+        self, object_id, object_type, fake_fn, **kwargs,
+    ):
+        # if object_type is 'plan', storage is self.plans
+        storage = getattr(self, '{}s'.format(object_type))
 
-        If sources exist in kwargs, add_source will be triggered automatically.
-        """
-        for idx, c in enumerate(self.plans):
+        for idx, c in enumerate(storage):
             # plan already exists, overwrite properties
-            if plan_id == c.id:
-                self.plans[idx].update(kwargs)
+            if object_id == c.id:
+                storage[idx].update(kwargs)
                 return
 
-        # add plan
-        self.plans.append(fake_plan(plan_id, **kwargs))
+        # add object
+        storage.append(fake_fn(object_id, **kwargs))
+
+    def add_plan(self, plan_id, **kwargs):
+        """Add / update a plan by id."""
+        self._add_object(plan_id, 'plan', fake_plan, **kwargs)
 
     def add_coupon(self, coupon_id, **kwargs):
-        """
-        If sources exist in kwargs, add_source will be triggered automatically.
-        """
-        for idx, c in enumerate(self.coupons):
-            # coupon already exists, overwrite properties
-            if coupon_id == c.id:
-                self.coupons[idx].update(kwargs)
-                return
-
-        # add coupon
-        self.coupons.append(fake_coupon(coupon_id, **kwargs))
+        """Add / update coupon object."""
+        self._add_object(coupon_id, 'coupon', fake_coupon, **kwargs)
 
     def add_customer(self, customer_id, **kwargs):
-        """
-        If sources exist in kwargs, add_source will be triggered automatically.
-        """
-        for idx, c in enumerate(self.customers):
-            # customer already exists, overwrite properties
-            if customer_id == c['id']:
-                self.customers[idx].update(kwargs)
-                return
-
-        # add customer
-        self.customers.append(fake_customer(customer_id, **kwargs))
+        """Add / update customer object."""
+        self._add_object(customer_id, 'customer', fake_customer, **kwargs)
 
     def sync(self):  # NOQA C901
         """Clear and recreate all responses based on stripe objects."""
