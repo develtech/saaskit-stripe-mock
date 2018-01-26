@@ -10,8 +10,8 @@ from .fake import (
     fake_customer_source,
     fake_customer_source_card,
     fake_customer_source_bank_account,
-    fake_customer_sources,
-    fake_customer_subscriptions,
+    fake_customer_source_list,
+    fake_customer_subscription_list,
     fake_customers,
     fake_plan,
     fake_plans,
@@ -312,7 +312,7 @@ class StripeMockAPI(object):
                     'GET',
                     '{}/{}/subscriptions'.format(
                         CUSTOMER_URL_BASE, customer_id),
-                    fake_customer_subscriptions(customer_id, subs),
+                    fake_customer_subscription_list(customer_id, subs),
                     200,
                 )
 
@@ -353,7 +353,7 @@ class StripeMockAPI(object):
                 add_response(
                     'GET',
                     '{}/{}/sources'.format(CUSTOMER_URL_BASE, customer_id),
-                    fake_customer_sources(customer_id, sources),
+                    fake_customer_source_list(customer_id, sources),
                     200,
                 )
 
@@ -382,11 +382,11 @@ class StripeMockAPI(object):
                     '{}/{}'.format(CUSTOMER_URL_BASE, c['id']),
                     {
                         **c, **{
-                            'subscriptions': fake_customer_subscriptions(
+                            'subscriptions': fake_customer_subscription_list(
                                 c['id'],
                                 self.customer_subscriptions.get(c['id'], []),
                             ),
-                            'sources': fake_customer_sources(
+                            'sources': fake_customer_source_list(
                                 c['id'],
                                 self.customer_sources.get(c['id'], []),
                             ),

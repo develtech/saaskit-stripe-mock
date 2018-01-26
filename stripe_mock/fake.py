@@ -71,7 +71,7 @@ def fake_plans(plan_list):
     }
 
 
-def fake_customer_subscriptions(customer_id, subscription_list):
+def fake_customer_subscription_list(customer_id, subscription_list):
     """Fake the subscription listings for a customer.
 
     :param customer_id: stripe customer id
@@ -90,7 +90,7 @@ def fake_customer_subscriptions(customer_id, subscription_list):
     }
 
 
-def fake_customer_sources(customer_id, source_list):
+def fake_customer_source_list(customer_id, source_list):
     """Fake the source listings for a customer.
 
     :param customer_id: stripe customer id
@@ -124,7 +124,7 @@ def fake_customer(customer_id, **kwargs):
         'metadata': {},
         'object': 'customer',
         'shipping': None,
-        'sources': fake_customer_sources(customer_id, [])
+        'sources': fake_customer_source_list(customer_id, [])
     }, **kwargs}
 
 

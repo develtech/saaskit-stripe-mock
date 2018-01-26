@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Functions to generate stripe responses. For use w/ responses.add_callback()
 """
-from .fake import fake_customer_sources
+from .fake import fake_customer_source_list
 from .patterns import (
     COUPON_URL_RE,
     CUSTOMER_SOURCE_LIST_URL_RE,
@@ -131,7 +131,7 @@ def source_list_callback_factory(source_list):
         cleaned_sources = [
             source for source in source_list if source['object'] == object_type
         ]
-        response = fake_customer_sources(customer_id, cleaned_sources)
+        response = fake_customer_source_list(customer_id, cleaned_sources)
         return (200, {}, response)
 
     return request_callback
