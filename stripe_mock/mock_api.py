@@ -43,6 +43,15 @@ from .response_callbacks import (
 )
 
 
+def _add_object(storage, object_id, fake_fn, **kwargs):
+    for idx, c in enumerate(storage):
+        if object_id == c.id:  # plan already exists, overwrite properties
+            storage[idx].update(kwargs)
+            return
+
+    storage.append(fake_fn(object_id, **kwargs))  # add object
+
+
 class StripeMockAPI(object):
 
     """Sets responses against the stripe API with dummy data.
@@ -225,32 +234,17 @@ class StripeMockAPI(object):
             **kwargs,
         )
 
-    def _add_object(
-        self, object_id, object_type, fake_fn, **kwargs,
-    ):
-        # if object_type is 'plan', storage is self.plans
-        storage = getattr(self, '{}s'.format(object_type))
-
-        for idx, c in enumerate(storage):
-            # plan already exists, overwrite properties
-            if object_id == c.id:
-                storage[idx].update(kwargs)
-                return
-
-        # add object
-        storage.append(fake_fn(object_id, **kwargs))
-
     def add_plan(self, plan_id, **kwargs):
         """Add / update a plan by id."""
-        self._add_object(plan_id, 'plan', fake_plan, **kwargs)
+        _add_object(self.plans, plan_id, fake_plan, **kwargs)
 
     def add_coupon(self, coupon_id, **kwargs):
         """Add / update coupon object."""
-        self._add_object(coupon_id, 'coupon', fake_coupon, **kwargs)
+        _add_object(self.coupons, coupon_id, fake_coupon, **kwargs)
 
     def add_customer(self, customer_id, **kwargs):
         """Add / update customer object."""
-        self._add_object(customer_id, 'customer', fake_customer, **kwargs)
+        _add_object(self.customers, customer_id, fake_customer, **kwargs)
 
     def sync(self):  # NOQA C901
         """Clear and recreate all responses based on stripe objects."""
