@@ -4,7 +4,7 @@ import pytest
 import responses
 import stripe
 
-from ..factory import StripeMockAPI
+from ..mock_api import StripeMockAPI
 
 
 @responses.activate
