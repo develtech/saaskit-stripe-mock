@@ -7,12 +7,12 @@ from .fake import (
     fake_coupon,
     fake_coupon_list,
     fake_customer,
+    fake_customer_list,
     fake_customer_source,
-    fake_customer_source_card,
     fake_customer_source_bank_account,
+    fake_customer_source_card,
     fake_customer_source_list,
     fake_customer_subscription_list,
-    fake_customer_list,
     fake_plan,
     fake_plan_list,
     fake_subscription,
@@ -22,14 +22,17 @@ from .helpers import add_callback, add_response
 from .patterns import (
     COUPON_URL_BASE,
     COUPON_URL_RE,
-    CUSTOMER_SOURCE_OBJECT_URL_RE,
     CUSTOMER_SOURCE_LIST_URL_RE,
+    CUSTOMER_SOURCE_OBJECT_URL_RE,
+    CUSTOMER_SOURCE_OBJECT_URL_TPL,
+    CUSTOMER_SUBSCRIPTION_LIST_URL_TPL,
     CUSTOMER_URL_BASE,
     CUSTOMER_URL_RE,
     PLAN_URL_BASE,
     PLAN_URL_RE,
     SOURCE_URL_BASE,
     SOURCE_URL_RE,
+    SUBSCRIPTION_OBJECT_URL_TPL,
     SUBSCRIPTION_URL_BASE,
     SUBSCRIPTION_URL_RE,
 )
@@ -292,14 +295,16 @@ class StripeMockAPI(object):
                 for sub in subs:
                     add_response(
                         'GET',
-                        '{}/{}'.format(SUBSCRIPTION_URL_BASE, sub['id']),
+                        SUBSCRIPTION_OBJECT_URL_TPL.format(subscription_id=sub['id']),
                         sub,
                         200,
                     )
                 add_response(
                     'GET',
-                    '{}/{}/subscriptions'.format(
-                        CUSTOMER_URL_BASE, customer_id),
+                    CUSTOMER_SUBSCRIPTION_LIST_URL_TPL.format(
+                        customer_url_base=CUSTOMER_URL_BASE,
+                        customer_id=customer_id,
+                    ),
                     fake_customer_subscription_list(customer_id, subs),
                     200,
                 )
@@ -324,8 +329,10 @@ class StripeMockAPI(object):
                 for source in sources:
                     add_response(
                         'GET',
-                        '{}/{}/sources/{}'.format(
-                            CUSTOMER_URL_BASE, customer_id, source['id'],
+                        CUSTOMER_SOURCE_OBJECT_URL_TPL.format(
+                            customer_url_base=CUSTOMER_URL_BASE,
+                            customer_id=customer_id,
+                            source_id=source['id'],
                         ),
                         source,
                         200,
