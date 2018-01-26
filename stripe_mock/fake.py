@@ -267,7 +267,7 @@ def fake_plan(plan_id, **kwargs):
     }, **kwargs}
 
 
-def fake_subscription(subscription_id, customer_id, **kwargs):
+def fake_subscription(customer_id, subscription_id, **kwargs):
     return {**{
         'application_fee_percent': None,
         'billing': 'charge_automatically',
