@@ -3,6 +3,26 @@
 from faker import Faker
 
 
+def fake_generic_listing(object_list, object_type):
+    """Fake root-level stripe object listings.
+
+    "root-level" is a listing that's not looked up via customer URL path.
+
+    :param object_list: list of object data
+    :type object_list: list[dict]
+    :returns: response of data immitating stripe's listing
+    :rtype: dict
+    """
+
+    return {
+        'data': object_list,
+        'has_more': False,
+        'object': 'list',
+        'total_count': len(object_list),
+        'url': '/v1/{}s'.format(object_type),
+    }
+
+
 def fake_subscriptions(subscription_list):
     """Fake the subscription listings (globally).
 
@@ -11,13 +31,7 @@ def fake_subscriptions(subscription_list):
     :returns: response of data immitating stripe's listing
     :rtype: dict
     """
-    return {
-        'data': subscription_list,
-        'has_more': False,
-        'object': 'list',
-        'total_count': len(subscription_list),
-        'url': '/v1/subscriptions',
-    }
+    return fake_generic_listing(subscription_list, 'subscription')
 
 
 def fake_coupons(coupon_list):
@@ -28,13 +42,7 @@ def fake_coupons(coupon_list):
     :returns: response of data immitating stripe's listing
     :rtype: dict
     """
-    return {
-        'data': coupon_list,
-        'has_more': False,
-        'object': 'list',
-        'total_count': len(coupon_list),
-        'url': '/v1/coupons',
-    }
+    return fake_generic_listing(coupon_list, 'coupon')
 
 
 def fake_customers(customer_list):
@@ -45,13 +53,7 @@ def fake_customers(customer_list):
     :returns: response of data immitating stripe's listing
     :rtype: dict
     """
-    return {
-        'data': customer_list,
-        'has_more': False,
-        'object': 'list',
-        'total_count': len(customer_list),
-        'url': '/v1/customers',
-    }
+    return fake_generic_listing(customer_list, 'customer')
 
 
 def fake_plans(plan_list):
@@ -62,13 +64,7 @@ def fake_plans(plan_list):
     :returns: response of data immitating stripe's listing
     :rtype: dict
     """
-    return {
-        'data': plan_list,
-        'has_more': False,
-        'object': 'list',
-        'total_count': len(plan_list),
-        'url': '/v1/plans',
-    }
+    return fake_generic_listing(plan_list, 'plan')
 
 
 def fake_customer_subscription_list(customer_id, subscription_list):
