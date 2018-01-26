@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from ..fake import (
+    fake_coupon,
     fake_customer,
     fake_customer_source,
-    fake_customer_sources,
-    fake_customer_subscriptions,
+    fake_customer_source_list,
+    fake_customer_subscription_list,
     fake_plan,
     fake_subscription,
 )
@@ -14,6 +15,12 @@ def test_fake_customer():
     customer_id = 'cus_ok'
     customer = fake_customer(customer_id)
     assert customer['id'] == customer_id
+
+
+def test_fake_coupon():
+    coupon_id = 'power_up'
+    coupon = fake_coupon(coupon_id)
+    assert coupon['id'] == coupon_id
 
 
 def test_fake_customer_source():
@@ -37,13 +44,14 @@ def test_fake_subscription():
     assert subscription['id'] == subscription_id
 
 
-def test_fake_customer_sources():
+def test_fake_customer_source_list():
     customer_id = 'cus_ok'
-    source = fake_customer_sources(customer_id, [])
+    source = fake_customer_source_list(customer_id, [])
     assert customer_id in source['url']
 
 
-def test_fake_customer_subscriptions():
+def test_fake_customer_subscription_list():
+    """Fake subscription listing response."""
     customer_id = 'cus_ok'
-    subscription = fake_customer_subscriptions(customer_id, [])
+    subscription = fake_customer_subscription_list(customer_id, [])
     assert customer_id in subscription['url']
