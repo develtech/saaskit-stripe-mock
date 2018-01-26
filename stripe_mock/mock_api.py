@@ -255,23 +255,43 @@ class StripeMockAPI(object):
         # add coupon
         self.coupons.append(fake_coupon(coupon_id, **kwargs))
 
-    def add_subscription(self, customer_id, subscription_id, **kwargs):
+    def _add_customer_object(
+        self, customer_id, object_id, object_type, fake_fn, **kwargs,
+    ):
+        """Generic function for storing / updating a customer-bound object.
+
+        Stripe objects bound to customer's all stored in an instance variable
+        where the customer is the key. For instance, for 'subscription'
+        object_type::
+
+            self.customer_subscriptions = {
+                '{customer_id}': [
+
+                ]
+            }
         """
-        If sources exist in kwargs, add_source will be triggered automatically.
-        """
-        if customer_id not in self.customer_subscriptions:
-            self.customer_subscriptions[customer_id] = []
+
+        storage = getattr(self, 'customer_{}s'.format(object_type))
+        if customer_id not in storage:
+            storage[customer_id] = []
 
         for idx, subscription in enumerate(
-                self.customer_subscriptions[customer_id]):
+                storage[customer_id]):
             # existing subscription?
             if kwargs['id'] == subscription['id']:  # update and return void
-                self.customer_subscriptions[customer_id][idx].update(kwargs)
+                storage[customer_id][idx].update(kwargs)
                 return
 
         # new subscription, append
-        self.customer_subscriptions[customer_id].append(
-            fake_subscription(subscription_id, customer_id, **kwargs),
+        storage[customer_id].append(
+            fake_fn(object_id, customer_id, **kwargs),
+        )
+
+    def add_subscription(self, customer_id, subscription_id, **kwargs):
+        """Add / Update a subscription for a customer."""
+        self._add_customer_object(
+            customer_id, subscription_id, 'subscription', fake_subscription,
+            **kwargs,
         )
 
     def sync(self):  # NOQA C901
