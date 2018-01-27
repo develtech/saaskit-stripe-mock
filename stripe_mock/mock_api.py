@@ -77,7 +77,7 @@ def _add_customer_object(storage, customer_id, object_id, fake_fn, **kwargs):
             storage[customer_id][idx].update(kwargs)
             return
 
-    storage[customer_id].append(fake_fn(customer_id, object_id, **kwargs))  # add
+    storage[customer_id].append(fake_fn(customer_id, object_id, **kwargs))
 
 
 class StripeMockAPI(object):
@@ -180,8 +180,11 @@ class StripeMockAPI(object):
         If source ID already exists, overwrite properties.
         """
         _add_customer_object(
-            self.customer_sources, customer_id, source_id,
-            fake_customer_source, **kwargs,
+            self.customer_sources,
+            customer_id,
+            source_id,
+            fake_customer_source,
+            **kwargs,
         )
 
     def add_source_card(self, customer_id, card_id, **kwargs):
@@ -200,8 +203,11 @@ class StripeMockAPI(object):
         """
 
         _add_customer_object(
-            self.customer_source_cards, customer_id, card_id,
-            fake_customer_source_card, **kwargs,
+            self.customer_source_cards,
+            customer_id,
+            card_id,
+            fake_customer_source_card,
+            **kwargs,
         )
 
     def add_source_bank_account(self, customer_id, bank_account_id, **kwargs):
@@ -220,15 +226,21 @@ class StripeMockAPI(object):
         """
 
         _add_customer_object(
-            self.customer_source_bank_accounts, customer_id, bank_account_id,
-            fake_customer_source_bank_account, **kwargs,
+            self.customer_source_bank_accounts,
+            customer_id,
+            bank_account_id,
+            fake_customer_source_bank_account,
+            **kwargs,
         )
 
     def add_subscription(self, customer_id, subscription_id, **kwargs):
         """Add / Update a subscription for a customer."""
         _add_customer_object(
-            self.customer_subscriptions, customer_id, subscription_id,
-            fake_subscription, **kwargs,
+            self.customer_subscriptions,
+            customer_id,
+            subscription_id,
+            fake_subscription,
+            **kwargs,
         )
 
     def add_plan(self, plan_id, **kwargs):
@@ -295,7 +307,8 @@ class StripeMockAPI(object):
                 for sub in subs:
                     add_response(
                         'GET',
-                        SUBSCRIPTION_OBJECT_URL_TPL.format(subscription_id=sub['id']),
+                        SUBSCRIPTION_OBJECT_URL_TPL.format(
+                            subscription_id=sub['id']),
                         sub,
                         200,
                     )
@@ -355,7 +368,8 @@ class StripeMockAPI(object):
         add_callback(
             'GET',
             SOURCE_URL_RE,
-            source_callback_factory(self.sources_list, blocked_objects=['card']),
+            source_callback_factory(
+                self.sources_list, blocked_objects=['card']),
         )
 
         add_callback(

@@ -96,7 +96,8 @@ def source_callback_factory(source_list, blocked_objects=[]):
     :rtype: dict
     """
     cleaned_sources = [
-        source for source in source_list if source['object'] not in blocked_objects
+        source for source in source_list
+        if source['object'] not in blocked_objects
     ]
 
     def request_callback(request):
