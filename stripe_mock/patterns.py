@@ -4,7 +4,11 @@ import re
 import stripe
 
 CUSTOMER_URL_BASE = '{}/v1/customers'.format(stripe.api_base)
-CUSTOMER_URL_RE = re.compile(r'{}/(\w+)'.format(CUSTOMER_URL_BASE))
+CUSTOMER_OBJECT_URL_TPL = '{customer_url_base}/{customer_id}'
+CUSTOMER_URL_RE = re.compile(CUSTOMER_OBJECT_URL_TPL.format(
+    customer_url_base=CUSTOMER_URL_BASE,
+    customer_id='(\w+)'
+))
 CUSTOMER_SOURCE_OBJECT_URL_RE = re.compile(
     r'{}/(\w+)/sources(\w+)'.format(CUSTOMER_URL_BASE)
 )
